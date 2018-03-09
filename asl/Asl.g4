@@ -38,7 +38,7 @@ program : function+ EOF
 
 // A function has a name, a list of parameters and a list of statements
 function
-        : FUNC ID '(' ')' declarations statements ENDFUNC
+        : FUNC ID '(' parameters? ')' output? declarations statements ENDFUNC
         ;
 
 declarations
@@ -46,10 +46,25 @@ declarations
         ;
 
 variable_decl
-        : VAR ID ':' type
+        : VAR ID (',' ID)* ':' type  
+        ;
+        
+parameters
+        : (VAR ID ':' type)  (',' VAR ID ':' type)*
+        ;
+output
+        : (':' type)
         ;
 
-type    : INT
+type
+    : basic_type
+    | ARRAY '[' INTVAL ']' OF basic_type
+        
+basic_type    
+        : INT
+        | BOOL
+        | FLOAT
+        | CHAR
         ;
 
 statements
@@ -70,6 +85,8 @@ statement
         | WRITE expr ';'                      # writeExpr
           // Write a string
         | WRITE STRING ';'                    # writeString
+        
+        | RETURN (expr)* 
         ;
 // Grammar for left expressions (l-values in C++)
 left_expr
@@ -97,6 +114,11 @@ PLUS      : '+' ;
 MUL       : '*';
 VAR       : 'var';
 INT       : 'int';
+BOOL      : 'bool';
+FLOAT     : 'float';
+CHAR      : 'char';
+ARRAY     : 'array';
+OF        : 'of';
 IF        : 'if' ;
 THEN      : 'then' ;
 ELSE      : 'else' ;
@@ -104,6 +126,7 @@ ENDIF     : 'endif' ;
 FUNC      : 'func' ;
 ENDFUNC   : 'endfunc' ;
 READ      : 'read' ;
+RETURN    : 'return';
 WRITE     : 'write' ;
 ID        : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 INTVAL    : ('0'..'9')+ ;
