@@ -107,11 +107,11 @@ public:
   void enterValue(AslParser::ValueContext *ctx);
   void exitValue(AslParser::ValueContext *ctx);
 
-  void enterExprIdent(AslParser::ExprIdentContext *ctx);
+  /*void enterExprIdent(AslParser::ExprIdentContext *ctx);
   void exitExprIdent(AslParser::ExprIdentContext *ctx);
 
   void enterIdent(AslParser::IdentContext *ctx);
-  void exitIdent(AslParser::IdentContext *ctx);
+  void exitIdent(AslParser::IdentContext *ctx);*/
 
   // void enterEveryRule(antlr4::ParserRuleContext *ctx);
   // void exitEveryRule(antlr4::ParserRuleContext *ctx);

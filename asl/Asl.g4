@@ -28,6 +28,7 @@
 
 grammar Asl;
 
+
 //////////////////////////////////////////////////
 /// Parser Rules
 //////////////////////////////////////////////////
@@ -36,6 +37,9 @@ grammar Asl;
 program : function+ EOF
         ;
 
+        
+//func f(a : int, b: bool) : int        
+        
 // A function has a name, a list of parameters and a list of statements
 function
         : FUNC ID '(' parameters? ')' output? declarations statements ENDFUNC
@@ -50,7 +54,7 @@ variable_decl
         ;
         
 parameters
-        : (VAR ID ':' type)  (',' VAR ID ':' type)*
+        : (ID ':' type)  (',' ID ':' type)*
         ;
 output
         : (':' type)
@@ -59,6 +63,7 @@ output
 type
     : basic_type
     | ARRAY '[' INTVAL ']' OF basic_type
+    ;
         
 basic_type    
         : INT
@@ -70,39 +75,54 @@ basic_type
 statements
         : (statement)*
         ;
-
 // The different types of instructions
 statement
           // Assignment
         : left_expr ASSIGN expr ';'           # assignStmt
           // if-then-else statement (else is optional)
-        | IF expr THEN statements ENDIF       # ifStmt
+        | IF expr THEN statements (ELSE statements)? ENDIF       # ifStmt
           // A function/procedure call has a list of arguments in parenthesis (possibly empty)
-        | ident '(' ')' ';'                   # procCall
+        | ID '(' ')' ';'                      # procCall
           // Read a variable
         | READ left_expr ';'                  # readStmt
+          // While loop
+        | WHILE expr DO statements ENDWHILE    # while
           // Write an expression
         | WRITE expr ';'                      # writeExpr
           // Write a string
         | WRITE STRING ';'                    # writeString
+          //Call a function
+        | ID '(' (expr)? (',' expr)* ')' ';'     # callfunctionStmt
         
-        | RETURN (expr)* 
+        | RETURN (expr)* ';'                  # return
         ;
 // Grammar for left expressions (l-values in C++)
 left_expr
-        : ident
+        : ID
+        | ID '[' expr ']'
         ;
 
 // Grammar for expressions with boolean, relational and aritmetic operators
-expr    : expr op=MUL expr                    # arithmetic
-        | expr op=PLUS expr                   # arithmetic
-        | expr op=EQUAL expr                  # relational
-        | INTVAL                              # value
-        | ident                               # exprIdent
+expr     
+        : '(' expr ')'                               # parenthesis   
+        | expr op=(MUL|DIV) expr                     # arithmetic
+        | expr op=(PLUS|SUB) expr                    # arithmetic
+        | expr AND expr                              # boolean
+        | expr OR expr                               # boolean
+        | NOT expr                                   # boolean
+        | expr op=(EQUAL|DIFF|LT|GT|LTE|GTE) expr    # relational
+        | op=(PLUS|SUB) expr                         # value
+        | ID '(' (expr)? (',' expr)* ')'             # callfunction        
+        | ID '[' expr ']'                            # arrayvalue
+        | atom                                       # atomrule
         ;
 
-ident   : ID
+atom    : ID
+        | INTVAL
+        | FLOATVAL
+        | CHARVAL
         ;
+        
 
 //////////////////////////////////////////////////
 /// Lexer Rules
@@ -110,8 +130,18 @@ ident   : ID
 
 ASSIGN    : '=' ;
 EQUAL     : '==' ;
+LT        : '<' ;
+GT        : '>' ;
+LTE       : '<=' ;
+GTE       : '>=' ;
+DIFF      : '!=' ;
 PLUS      : '+' ;
-MUL       : '*';
+SUB       : '-' ;
+MUL       : '*' ;
+DIV       : '/' ;
+AND       : 'and' ;
+OR        : 'or'  ;
+NOT       : 'not' ;
 VAR       : 'var';
 INT       : 'int';
 BOOL      : 'bool';
@@ -125,12 +155,16 @@ ELSE      : 'else' ;
 ENDIF     : 'endif' ;
 FUNC      : 'func' ;
 ENDFUNC   : 'endfunc' ;
+WHILE     : 'while' ;
+ENDWHILE  : 'endwhile' ;
+DO        : 'do' ;
 READ      : 'read' ;
 RETURN    : 'return';
 WRITE     : 'write' ;
 ID        : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 INTVAL    : ('0'..'9')+ ;
-
+FLOATVAL  : ('0'..'9')+ '.' ('0'..'9')* ;
+CHARVAL   : '\'' ('a'..'z'|'A'..'Z'|'0'..'9') '\'' ;
 // Strings (in quotes) with escape sequences
 STRING    : '"' ( ESC_SEQ | ~('\\'|'"') )* '"' ;
 

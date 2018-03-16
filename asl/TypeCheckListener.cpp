@@ -137,10 +137,10 @@ void TypeCheckListener::enterProcCall(AslParser::ProcCallContext *ctx) {
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitProcCall(AslParser::ProcCallContext *ctx) {
-  TypesMgr::TypeId t1 = getTypeDecor(ctx->ident());
+  /*TypesMgr::TypeId t1 = getTypeDecor(ctx->ident());
   if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
     Errors.isNotCallable(ctx->ident());
-  }
+  }*/
   DEBUG_EXIT();
 }
 
@@ -178,10 +178,10 @@ void TypeCheckListener::enterLeft_expr(AslParser::Left_exprContext *ctx) {
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
-  TypesMgr::TypeId t1 = getTypeDecor(ctx->ident());
+  /*TypesMgr::TypeId t1 = getTypeDecor(ctx->ident());
   putTypeDecor(ctx, t1);
   bool b = getIsLValueDecor(ctx->ident());
-  putIsLValueDecor(ctx, b);
+  putIsLValueDecor(ctx, b);*/
   DEBUG_EXIT();
 }
 
@@ -226,7 +226,7 @@ void TypeCheckListener::exitValue(AslParser::ValueContext *ctx) {
   DEBUG_EXIT();
 }
 
-void TypeCheckListener::enterExprIdent(AslParser::ExprIdentContext *ctx) {
+/*void TypeCheckListener::enterExprIdent(AslParser::ExprIdentContext *ctx) {
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitExprIdent(AslParser::ExprIdentContext *ctx) {
@@ -257,7 +257,7 @@ void TypeCheckListener::exitIdent(AslParser::IdentContext *ctx) {
       putIsLValueDecor(ctx, true);
   }
   DEBUG_EXIT();
-}
+}*/
 
 // void TypeCheckListener::enterEveryRule(antlr4::ParserRuleContext *ctx) {
 //   DEBUG_ENTER();

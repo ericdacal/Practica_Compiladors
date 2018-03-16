@@ -97,7 +97,7 @@ void CodeGenListener::exitVariable_decl(AslParser::Variable_declContext *ctx) {
   subroutine       & subrRef = Code.get_last_subroutine();
   TypesMgr::TypeId        t1 = getTypeDecor(ctx->type());
   std::size_t           size = Types.getSizeOfType(t1);
-  subrRef.add_var(ctx->ID()->getText(), size);
+  //subrRef.add_var(ctx->ID()->getText(), size);
   DEBUG_EXIT();
 }
 
@@ -142,15 +142,15 @@ void CodeGenListener::enterIfStmt(AslParser::IfStmtContext *ctx) {
   DEBUG_ENTER();
 }
 void CodeGenListener::exitIfStmt(AslParser::IfStmtContext *ctx) {
-  instructionList   code;
+ /* instructionList   code;
   std::string      addr1 = getAddrDecor(ctx->expr());
   instructionList  code1 = getCodeDecor(ctx->expr());
-  instructionList  code2 = getCodeDecor(ctx->statements());
+  //instructionList  code2 = getCodeDecor(ctx->statements());
   std::string      label = codeCounters.newLabelIF();
   std::string labelEndIf = "endif"+label;
   code = code1 || instruction::FJUMP(addr1, labelEndIf) ||
          code2 || instruction::LABEL(labelEndIf);
-  putCodeDecor(ctx, code);
+  putCodeDecor(ctx, code);*/
   DEBUG_EXIT();
 }
 
@@ -160,9 +160,9 @@ void CodeGenListener::enterProcCall(AslParser::ProcCallContext *ctx) {
 void CodeGenListener::exitProcCall(AslParser::ProcCallContext *ctx) {
   instructionList code;
   // std::string name = ctx->ident()->ID()->getSymbol()->getText();
-  std::string name = ctx->ident()->getText();
-  code = instruction::CALL(name);
-  putCodeDecor(ctx, code);
+  //std::string name = ctx->ident()->getText();
+  //code = instruction::CALL(name);
+  //putCodeDecor(ctx, code);
   DEBUG_EXIT();
 }
 
@@ -237,9 +237,9 @@ void CodeGenListener::enterLeft_expr(AslParser::Left_exprContext *ctx) {
   DEBUG_ENTER();
 }
 void CodeGenListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
-  putAddrDecor(ctx, getAddrDecor(ctx->ident()));
+  /*putAddrDecor(ctx, getAddrDecor(ctx->ident()));
   putOffsetDecor(ctx, getOffsetDecor(ctx->ident()));
-  putCodeDecor(ctx, getCodeDecor(ctx->ident()));
+  putCodeDecor(ctx, getCodeDecor(ctx->ident()));*/
   DEBUG_ENTER();
 }
 
@@ -256,10 +256,10 @@ void CodeGenListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   // TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
   // TypesMgr::TypeId t  = getTypeDecor(ctx);
   std::string temp = "%"+codeCounters.newTEMP();
-  if (ctx->MUL())
+  /*if (ctx->MUL())
     code = code || instruction::MUL(temp, addr1, addr2);
   else // (ctx->PLUS())
-    code = code || instruction::ADD(temp, addr1, addr2);
+    code = code || instruction::ADD(temp, addr1, addr2);*/
   putAddrDecor(ctx, temp);
   putOffsetDecor(ctx, "");
   putCodeDecor(ctx, code);
@@ -299,17 +299,18 @@ void CodeGenListener::exitValue(AslParser::ValueContext *ctx) {
   DEBUG_EXIT();
 }
 
-void CodeGenListener::enterExprIdent(AslParser::ExprIdentContext *ctx) {
+/*void CodeGenListener::enterExprIdent(AslParser::ExprIdentContext *ctx) {
   DEBUG_ENTER();
-}
-void CodeGenListener::exitExprIdent(AslParser::ExprIdentContext *ctx) {
+}*/
+
+/*void CodeGenListener::exitExprIdent(AslParser::ExprIdentContext *ctx) {
   putAddrDecor(ctx, getAddrDecor(ctx->ident()));
   putOffsetDecor(ctx, getOffsetDecor(ctx->ident()));
   putCodeDecor(ctx, getCodeDecor(ctx->ident()));
   DEBUG_EXIT();
-}
+}*/
 
-void CodeGenListener::enterIdent(AslParser::IdentContext *ctx) {
+/*void CodeGenListener::enterIdent(AslParser::IdentContext *ctx) {
   DEBUG_ENTER();
 }
 void CodeGenListener::exitIdent(AslParser::IdentContext *ctx) {
@@ -317,7 +318,7 @@ void CodeGenListener::exitIdent(AslParser::IdentContext *ctx) {
   putOffsetDecor(ctx, "");
   putCodeDecor(ctx, instructionList());
   DEBUG_EXIT();
-}
+}*/
 
 // void CodeGenListener::enterEveryRule(antlr4::ParserRuleContext *ctx) {
 //   DEBUG_ENTER();

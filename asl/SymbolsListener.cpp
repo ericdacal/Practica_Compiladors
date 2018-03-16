@@ -104,7 +104,7 @@ void SymbolsListener::enterVariable_decl(AslParser::Variable_declContext *ctx) {
   DEBUG_ENTER();
 }
 void SymbolsListener::exitVariable_decl(AslParser::Variable_declContext *ctx) {
-  std::string ident = ctx->ID()->getText();
+  /*std::string ident = ctx->ID()->getText();
   if (Symbols.findInCurrentScope(ident)) {
     Errors.declaredIdent(ctx->ID());
   }
@@ -112,18 +112,18 @@ void SymbolsListener::exitVariable_decl(AslParser::Variable_declContext *ctx) {
     TypesMgr::TypeId t1 = getTypeDecor(ctx->type());
     Symbols.addLocalVar(ident, t1);
   }
-  DEBUG_EXIT();
+  DEBUG_EXIT();*/
 }
 
 void SymbolsListener::enterType(AslParser::TypeContext *ctx) {
   DEBUG_ENTER();
 }
 void SymbolsListener::exitType(AslParser::TypeContext *ctx) {
-  if (ctx->INT()) {
+  /*if (ctx->INT()) {
     TypesMgr::TypeId t = Types.createIntegerTy();
     putTypeDecor(ctx, t);
   }
-  DEBUG_EXIT();
+  DEBUG_EXIT();*/
 }
 
 void SymbolsListener::enterStatements(AslParser::StatementsContext *ctx) {
@@ -203,7 +203,7 @@ void SymbolsListener::exitValue(AslParser::ValueContext *ctx) {
   DEBUG_EXIT();
 }
 
-void SymbolsListener::enterExprIdent(AslParser::ExprIdentContext *ctx) {
+/*void SymbolsListener::enterExprIdent(AslParser::ExprIdentContext *ctx) {
   DEBUG_ENTER();
 }
 void SymbolsListener::exitExprIdent(AslParser::ExprIdentContext *ctx) {
@@ -215,7 +215,7 @@ void SymbolsListener::enterIdent(AslParser::IdentContext *ctx) {
 }
 void SymbolsListener::exitIdent(AslParser::IdentContext *ctx) {
   DEBUG_EXIT();
-}
+}*/
 
 // void SymbolsListener::enterEveryRule(antlr4::ParserRuleContext *ctx) {
 //   DEBUG_ENTER();

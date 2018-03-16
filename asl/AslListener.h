@@ -35,6 +35,9 @@ public:
   virtual void enterType(AslParser::TypeContext *ctx) = 0;
   virtual void exitType(AslParser::TypeContext *ctx) = 0;
 
+  virtual void enterBasic_type(AslParser::Basic_typeContext *ctx) = 0;
+  virtual void exitBasic_type(AslParser::Basic_typeContext *ctx) = 0;
+
   virtual void enterStatements(AslParser::StatementsContext *ctx) = 0;
   virtual void exitStatements(AslParser::StatementsContext *ctx) = 0;
 
@@ -50,17 +53,32 @@ public:
   virtual void enterReadStmt(AslParser::ReadStmtContext *ctx) = 0;
   virtual void exitReadStmt(AslParser::ReadStmtContext *ctx) = 0;
 
+  virtual void enterWhile(AslParser::WhileContext *ctx) = 0;
+  virtual void exitWhile(AslParser::WhileContext *ctx) = 0;
+
   virtual void enterWriteExpr(AslParser::WriteExprContext *ctx) = 0;
   virtual void exitWriteExpr(AslParser::WriteExprContext *ctx) = 0;
 
   virtual void enterWriteString(AslParser::WriteStringContext *ctx) = 0;
   virtual void exitWriteString(AslParser::WriteStringContext *ctx) = 0;
 
+  virtual void enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) = 0;
+  virtual void exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) = 0;
+
+  virtual void enterReturn(AslParser::ReturnContext *ctx) = 0;
+  virtual void exitReturn(AslParser::ReturnContext *ctx) = 0;
+
   virtual void enterLeft_expr(AslParser::Left_exprContext *ctx) = 0;
   virtual void exitLeft_expr(AslParser::Left_exprContext *ctx) = 0;
 
-  virtual void enterExprIdent(AslParser::ExprIdentContext *ctx) = 0;
-  virtual void exitExprIdent(AslParser::ExprIdentContext *ctx) = 0;
+  virtual void enterCallfunction(AslParser::CallfunctionContext *ctx) = 0;
+  virtual void exitCallfunction(AslParser::CallfunctionContext *ctx) = 0;
+
+  virtual void enterBoolean(AslParser::BooleanContext *ctx) = 0;
+  virtual void exitBoolean(AslParser::BooleanContext *ctx) = 0;
+
+  virtual void enterAtomrule(AslParser::AtomruleContext *ctx) = 0;
+  virtual void exitAtomrule(AslParser::AtomruleContext *ctx) = 0;
 
   virtual void enterArithmetic(AslParser::ArithmeticContext *ctx) = 0;
   virtual void exitArithmetic(AslParser::ArithmeticContext *ctx) = 0;
@@ -68,11 +86,17 @@ public:
   virtual void enterRelational(AslParser::RelationalContext *ctx) = 0;
   virtual void exitRelational(AslParser::RelationalContext *ctx) = 0;
 
+  virtual void enterParenthesis(AslParser::ParenthesisContext *ctx) = 0;
+  virtual void exitParenthesis(AslParser::ParenthesisContext *ctx) = 0;
+
   virtual void enterValue(AslParser::ValueContext *ctx) = 0;
   virtual void exitValue(AslParser::ValueContext *ctx) = 0;
 
-  virtual void enterIdent(AslParser::IdentContext *ctx) = 0;
-  virtual void exitIdent(AslParser::IdentContext *ctx) = 0;
+  virtual void enterArrayvalue(AslParser::ArrayvalueContext *ctx) = 0;
+  virtual void exitArrayvalue(AslParser::ArrayvalueContext *ctx) = 0;
+
+  virtual void enterAtom(AslParser::AtomContext *ctx) = 0;
+  virtual void exitAtom(AslParser::AtomContext *ctx) = 0;
 
 
 };
