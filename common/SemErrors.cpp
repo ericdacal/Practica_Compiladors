@@ -31,130 +31,127 @@
 #include "antlr4-runtime.h"
 
 #include <iostream>
+#include <string>
+#include <algorithm>
 
 // using namespace std;
 
 
-SemErrors::SemErrors() : numErrors{0} {
+void SemErrors::print() {
+  std::sort(ErrorList.begin(), ErrorList.end(), less);  
+  for (auto & error : ErrorList) error.print();
 }
 
-unsigned int SemErrors::getNumberOfErrors() const {
-  return numErrors;
+bool SemErrors::less(const ErrorInfo & e1, const ErrorInfo & e2) {
+  return e1.getLine() < e2.getLine();
+}
+
+std::size_t SemErrors::getNumberOfSemanticErrors() const {
+  return ErrorList.size();
 }
 
 void SemErrors::declaredIdent(antlr4::tree::TerminalNode *node) {
-  ++numErrors;
-  printErrorLoc(node->getSymbol()->getLine(), node->getSymbol()->getCharPositionInLine());
-  std::cout << "Identifier '" << node->getSymbol()->getText() << "' already declared." << std::endl;
+  ErrorInfo error(node->getSymbol()->getLine(), node->getSymbol()->getCharPositionInLine(), "Identifier '" + node->getSymbol()->getText() + "' already declared.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::undeclaredIdent(antlr4::tree::TerminalNode *node) {
-  ++numErrors;
-  printErrorLoc(node->getSymbol()->getLine(), node->getSymbol()->getCharPositionInLine());
-  std::cout << "Identifier '" << node->getSymbol()->getText() << "' is undeclared." << std::endl;
+  ErrorInfo error(node->getSymbol()->getLine(), node->getSymbol()->getCharPositionInLine(), "Identifier '" + node->getSymbol()->getText() + "' is undeclared.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::incompatibleAssignment(antlr4::tree::TerminalNode *node) {
-  ++numErrors;
-  printErrorLoc(node->getSymbol()->getLine(), node->getSymbol()->getCharPositionInLine());
-  std::cout << "Assignment with incompatible types." << std::endl;
+  ErrorInfo error(node->getSymbol()->getLine(), node->getSymbol()->getCharPositionInLine(), "Assignment with incompatible types.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::nonReferenceableLeftExpr(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Left expression of assignment is not referenceable." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Left expression of assignment is not referenceable.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::incompatibleOperator(antlr4::Token* tok) {
-  ++numErrors;
-  printErrorLoc(tok->getLine(), tok->getCharPositionInLine());
-  std::cout << "Operator '" << tok->getText() << "' with incompatible types." << std::endl;
+  ErrorInfo error(tok->getLine(), tok->getCharPositionInLine(), "Operator '" + tok->getText() + "' with incompatible types.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::nonArrayInArrayAccess(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Array access to a non array operand." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Array access to a non array operand.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::nonIntegerIndexInArrayAccess(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Array access witn non integer index." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Array access witn non integer index.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::booleanRequired(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Instruction '" << ctx->getStart()->getText() << "' requires a boolean condition." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Instruction '" + ctx->getStart()->getText() + "' requires a boolean condition.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::isNotCallable(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Identifier '" << ctx->getStart()->getText() << "' is not a callable function." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Identifier '" + ctx->getStart()->getText() + "' is not a callable function.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::isNotProcedure(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Identifier '" << ctx->getStart()->getText() << "' is not a procedure." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Identifier '" + ctx->getStart()->getText() + "' is not a procedure.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::isNotFunction(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Identifier '" << ctx->getStart()->getText() << "' is a void returning function." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Identifier '" + ctx->getStart()->getText() + "' is a void returning function.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::numberOfParameters(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "The number of parameters in the call to '" << ctx->getStart()->getText() << "' does not match." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "The number of parameters in the call to '" + ctx->getStart()->getText() + "' does not match.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::incompatibleParameter(antlr4::ParserRuleContext *pCtx,
 				      unsigned int n,
 				      antlr4::ParserRuleContext *cCtx) {
-  ++numErrors;
-  printErrorLoc(pCtx->getStart()->getLine(), pCtx->getStart()->getCharPositionInLine());
-  std::cout << "Parameter #" << n << " with incompatible types in call to '" << cCtx->getStart()->getText() << "'." << std::endl;
+  ErrorInfo error(pCtx->getStart()->getLine(), pCtx->getStart()->getCharPositionInLine(), "Parameter #" + std::to_string(n) + " with incompatible types in call to '" + cCtx->getStart()->getText() + "'.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::referenceableParameter(antlr4::ParserRuleContext *pCtx,
 				       unsigned int n,
 				       antlr4::ParserRuleContext *cCtx) {
-  ++numErrors;
-  printErrorLoc(pCtx->getStart()->getLine(), pCtx->getStart()->getCharPositionInLine());
-  std::cout << "Parameter #" << n << " is expected to be referenceable in call to '" << cCtx->getStart()->getText() << "'." << std::endl;
+  ErrorInfo error(pCtx->getStart()->getLine(), pCtx->getStart()->getCharPositionInLine(), "Parameter #" + std::to_string(n) + " is expected to be referenceable in call to '" + cCtx->getStart()->getText() + "'.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::incompatibleReturn(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Return with incompatible type." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Return with incompatible type.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::readWriteRequireBasic(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Basic type required in '" << ctx->getStart()->getText() << "'." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Basic type required in '" + ctx->getStart()->getText() + "'.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::nonReferenceableExpression(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine());
-  std::cout << "Referenceable expression required in '" << ctx->getStart()->getText() << "'." << std::endl;
+  ErrorInfo error(ctx->getStart()->getLine(), ctx->getStart()->getCharPositionInLine(), "Referenceable expression required in '" + ctx->getStart()->getText() + "'.");
+  ErrorList.push_back(error);
 }
 
 void SemErrors::noMainProperlyDeclared(antlr4::ParserRuleContext *ctx) {
-  ++numErrors;
-  printErrorLoc(ctx->getStop()->getLine(), ctx->getStop()->getCharPositionInLine());
-  std::cout << "There is no 'main' function properly declared." << std::endl;
+  ErrorInfo error(ctx->getStop()->getLine(), ctx->getStop()->getCharPositionInLine(), "There is no 'main' function properly declared.");
+  ErrorList.push_back(error);
 }
 
-void SemErrors::printErrorLoc(unsigned int line, unsigned int col) const {
-  // std::cout << "[" << line << ":" << col << "] error: ";
-  std::cout << "Line " << line << ":" << col << " error: ";
+SemErrors::ErrorInfo::ErrorInfo(std::size_t line, std::size_t coln, std::string message)
+  : line{line}, coln{coln}, message{message} {
+}
+
+void SemErrors::ErrorInfo::print() const {
+  std::cout << "Line " << line << ":" << coln << " error: " << message << std::endl;
+}
+
+std::size_t SemErrors::ErrorInfo::getLine() const {
+  return line;
 }

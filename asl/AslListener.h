@@ -26,9 +26,6 @@ public:
   virtual void enterVariable_decl(AslParser::Variable_declContext *ctx) = 0;
   virtual void exitVariable_decl(AslParser::Variable_declContext *ctx) = 0;
 
-  virtual void enterParameters(AslParser::ParametersContext *ctx) = 0;
-  virtual void exitParameters(AslParser::ParametersContext *ctx) = 0;
-
   virtual void enterOutput(AslParser::OutputContext *ctx) = 0;
   virtual void exitOutput(AslParser::OutputContext *ctx) = 0;
 

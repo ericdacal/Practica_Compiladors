@@ -24,9 +24,8 @@ public:
 
   enum {
     RuleProgram = 0, RuleFunction = 1, RuleDeclarations = 2, RuleVariable_decl = 3, 
-    RuleParameters = 4, RuleOutput = 5, RuleType = 6, RuleBasic_type = 7, 
-    RuleStatements = 8, RuleStatement = 9, RuleLeft_expr = 10, RuleExpr = 11, 
-    RuleAtom = 12
+    RuleOutput = 4, RuleType = 5, RuleBasic_type = 6, RuleStatements = 7, 
+    RuleStatement = 8, RuleLeft_expr = 9, RuleExpr = 10, RuleAtom = 11
   };
 
   AslParser(antlr4::TokenStream *input);
@@ -43,7 +42,6 @@ public:
   class FunctionContext;
   class DeclarationsContext;
   class Variable_declContext;
-  class ParametersContext;
   class OutputContext;
   class TypeContext;
   class Basic_typeContext;
@@ -73,12 +71,14 @@ public:
     FunctionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *FUNC();
-    antlr4::tree::TerminalNode *ID();
+    std::vector<antlr4::tree::TerminalNode *> ID();
+    antlr4::tree::TerminalNode* ID(size_t i);
     DeclarationsContext *declarations();
     StatementsContext *statements();
     antlr4::tree::TerminalNode *ENDFUNC();
-    ParametersContext *parameters();
     OutputContext *output();
+    std::vector<TypeContext *> type();
+    TypeContext* type(size_t i);
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -116,22 +116,6 @@ public:
   };
 
   Variable_declContext* variable_decl();
-
-  class  ParametersContext : public antlr4::ParserRuleContext {
-  public:
-    ParametersContext(antlr4::ParserRuleContext *parent, size_t invokingState);
-    virtual size_t getRuleIndex() const override;
-    std::vector<antlr4::tree::TerminalNode *> ID();
-    antlr4::tree::TerminalNode* ID(size_t i);
-    std::vector<TypeContext *> type();
-    TypeContext* type(size_t i);
-
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-   
-  };
-
-  ParametersContext* parameters();
 
   class  OutputContext : public antlr4::ParserRuleContext {
   public:

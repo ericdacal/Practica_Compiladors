@@ -28,9 +28,6 @@ public:
   virtual void enterVariable_decl(AslParser::Variable_declContext * /*ctx*/) override { }
   virtual void exitVariable_decl(AslParser::Variable_declContext * /*ctx*/) override { }
 
-  virtual void enterParameters(AslParser::ParametersContext * /*ctx*/) override { }
-  virtual void exitParameters(AslParser::ParametersContext * /*ctx*/) override { }
-
   virtual void enterOutput(AslParser::OutputContext * /*ctx*/) override { }
   virtual void exitOutput(AslParser::OutputContext * /*ctx*/) override { }
 

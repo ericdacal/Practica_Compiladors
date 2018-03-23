@@ -68,7 +68,7 @@ void CodeGenListener::exitProgram(AslParser::ProgramContext *ctx) {
 
 void CodeGenListener::enterFunction(AslParser::FunctionContext *ctx) {
   DEBUG_ENTER();
-  subroutine subr(ctx->ID()->getText());
+  subroutine subr(ctx->ID(0)->getText());
   Code.add_subroutine(subr);
   SymTable::ScopeId sc = getScopeDecor(ctx);
   Symbols.pushThisScope(sc);
