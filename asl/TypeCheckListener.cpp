@@ -133,15 +133,51 @@ void TypeCheckListener::exitIfStmt(AslParser::IfStmtContext *ctx) {
   DEBUG_EXIT();
 }
 
+void TypeCheckListener::enterWhile(AslParser::WhileContext *ctx) {
+    DEBUG_ENTER();
+}
+
+void TypeCheckListener::exitWhile(AslParser::WhileContext *ctx) {
+  TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
+  if ((not Types.isErrorTy(t1)) and (not Types.isBooleanTy(t1)))
+    Errors.booleanRequired(ctx);
+  DEBUG_EXIT();
+}
+
 void TypeCheckListener::enterProcCall(AslParser::ProcCallContext *ctx) {
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitProcCall(AslParser::ProcCallContext *ctx) {
-  /*TypesMgr::TypeId t1 = getTypeDecor(ctx->ident());
+  std::string ident = ctx->getText();
+  TypesMgr::TypeId t1 = Symbols.getType(ident);
   if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
-    Errors.isNotCallable(ctx->ident());
-  }*/
+    Errors.isNotCallable(ctx);
+  }
   DEBUG_EXIT();
+}
+void TypeCheckListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
+    DEBUG_ENTER();
+}
+
+void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
+    std::string ident = ctx->getText();
+    TypesMgr::TypeId t1 = Symbols.getType(ident);
+    if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
+        Errors.isNotCallable(ctx);
+    }
+    if(Types.getNumOfParameters(t1) != ctx->expr().size()) {
+        Errors.numberOfParameters(ctx);
+    }
+    for(uint i = 1; i < Types.getNumOfParameters(t1); ++i) {
+        TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(i));
+        if(not Types.equalTypes(Types.getParameterType(t1,i), t2)) {
+            Errors.incompatibleParameter(ctx, i, ctx->expr(i));
+        }
+        if(not getIsLValueDecor(ctx->expr(i))) {
+            Errors.nonReferenceableExpression(ctx);
+        }
+    }
+    DEBUG_EXIT();
 }
 
 void TypeCheckListener::enterReadStmt(AslParser::ReadStmtContext *ctx) {
@@ -178,10 +214,17 @@ void TypeCheckListener::enterLeft_expr(AslParser::Left_exprContext *ctx) {
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
-  /*TypesMgr::TypeId t1 = getTypeDecor(ctx->ident());
+  std::string ident = ctx->getText();
+  TypesMgr::TypeId t1 = Symbols.getType(ident);
+  if(Types.isArrayTy(t1)) {
+      TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
+      if(Types.isIntegerTy(t2)) {
+          Errors.nonIntegerIndexInArrayAccess(ctx);
+      }
+  }
   putTypeDecor(ctx, t1);
-  bool b = getIsLValueDecor(ctx->ident());
-  putIsLValueDecor(ctx, b);*/
+  bool b = getIsLValueDecor(ctx);
+  putIsLValueDecor(ctx, b);
   DEBUG_EXIT();
 }
 
