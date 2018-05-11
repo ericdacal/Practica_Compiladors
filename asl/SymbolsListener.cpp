@@ -78,12 +78,12 @@ void SymbolsListener::enterFunction(AslParser::FunctionContext *ctx) {
   putScopeDecor(ctx, sc);
 }
 void SymbolsListener::exitFunction(AslParser::FunctionContext *ctx) {
-  Symbols.popScope();
-  std::string ident = ctx->ID(0)->getText();
-  if (Symbols.findInCurrentScope(ident)) {
-    Errors.declaredIdent(ctx->ID(0));
-  }
-  else {
+    bool error = false;
+    std::string ident = ctx->ID(0)->getText();
+    if (Symbols.findInCurrentScope(ident)) {
+      Errors.declaredIdent(ctx->ID(0));
+      error = true;
+    }
     std::vector<TypesMgr::TypeId> lParamsTy;
     for(uint i = 1; i < ctx->ID().size();++i) {
         std::string ident = ctx->ID(i)->getText();
@@ -97,10 +97,11 @@ void SymbolsListener::exitFunction(AslParser::FunctionContext *ctx) {
     }
     TypesMgr::TypeId tRet = getTypeDecor(ctx->output());
     TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
-    Symbols.addFunction(ident, tFunc);
-  }
-  DEBUG_EXIT();
+    if(!error) Symbols.addFunction(ident, tFunc);
+    Symbols.popScope();
+    DEBUG_EXIT();
 }
+  
 
 void SymbolsListener::enterOutput(AslParser::OutputContext *ctx) {
   DEBUG_ENTER();
@@ -187,12 +188,36 @@ void SymbolsListener::exitIfStmt(AslParser::IfStmtContext *ctx) {
   DEBUG_EXIT();
 }
 
-void SymbolsListener::enterProcCall(AslParser::ProcCallContext *ctx) {
+/*void SymbolsListener::enterProcCall(AslParser::ProcCallContext *ctx) {
   DEBUG_ENTER();
+  std::string funcName = ctx->ID()->getText();
+  SymTable::ScopeId sc = Symbols.pushNewScope(funcName);
+  putScopeDecor(ctx, sc);
 }
 void SymbolsListener::exitProcCall(AslParser::ProcCallContext *ctx) {
+  Symbols.popScope();
+  std::string ident = ctx->ID()->getText();
+  if (Symbols.findInCurrentScope(ident)) {
+    Errors.declaredIdent(ctx->ID());
+  }
+  else {
+    std::vector<TypesMgr::TypeId> lParamsTy;
+    for(uint i = ; i < ctx->ID().size();++i) {
+        std::string ident = ctx->ID()->getText();
+        if (Symbols.findInCurrentScope(ident)) {
+              Errors.declaredIdent(ctx->ID());
+        }
+        else {
+          TypesMgr::TypeId t = getTypeDecor(ctx->type(i));
+          lParamsTy.push_back(t);
+        }
+    }
+    TypesMgr::TypeId tRet = Types.createVoidTy();
+    TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
+    Symbols.addFunction(ident, tFunc);
+  }
   DEBUG_EXIT();
-}
+}*/
 
 void SymbolsListener::enterReadStmt(AslParser::ReadStmtContext *ctx) {
   DEBUG_ENTER();
@@ -277,6 +302,9 @@ SymTable::ScopeId SymbolsListener::getScopeDecor(antlr4::ParserRuleContext *ctx)
 TypesMgr::TypeId SymbolsListener::getTypeDecor(antlr4::ParserRuleContext *ctx) {
   return Decorations.getType(ctx);
 }
+
+
+
 
 // Setters for the necessary tree node attributes:
 //   Scope and Type

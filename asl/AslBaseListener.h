@@ -46,9 +46,6 @@ public:
   virtual void enterIfStmt(AslParser::IfStmtContext * /*ctx*/) override { }
   virtual void exitIfStmt(AslParser::IfStmtContext * /*ctx*/) override { }
 
-  virtual void enterProcCall(AslParser::ProcCallContext * /*ctx*/) override { }
-  virtual void exitProcCall(AslParser::ProcCallContext * /*ctx*/) override { }
-
   virtual void enterReadStmt(AslParser::ReadStmtContext * /*ctx*/) override { }
   virtual void exitReadStmt(AslParser::ReadStmtContext * /*ctx*/) override { }
 

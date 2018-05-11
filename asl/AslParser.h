@@ -18,8 +18,8 @@ public:
     VAR = 22, INT = 23, BOOL = 24, FLOAT = 25, CHAR = 26, ARRAY = 27, OF = 28, 
     IF = 29, THEN = 30, ELSE = 31, ENDIF = 32, FUNC = 33, ENDFUNC = 34, 
     WHILE = 35, ENDWHILE = 36, DO = 37, READ = 38, RETURN = 39, WRITE = 40, 
-    ID = 41, INTVAL = 42, FLOATVAL = 43, CHARVAL = 44, STRING = 45, COMMENT = 46, 
-    WS = 47
+    BOOLVAL = 41, ID = 42, INTVAL = 43, FLOATVAL = 44, CHARVAL = 45, STRING = 46, 
+    COMMENT = 47, WS = 48
   };
 
   enum {
@@ -189,15 +189,6 @@ public:
    
   };
 
-  class  ProcCallContext : public StatementContext {
-  public:
-    ProcCallContext(StatementContext *ctx);
-
-    antlr4::tree::TerminalNode *ID();
-    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
-    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
-  };
-
   class  WriteExprContext : public StatementContext {
   public:
     WriteExprContext(StatementContext *ctx);
@@ -333,9 +324,10 @@ public:
   public:
     BooleanContext(ExprContext *ctx);
 
-    antlr4::tree::TerminalNode *NOT();
+    antlr4::Token *op = nullptr;
     std::vector<ExprContext *> expr();
     ExprContext* expr(size_t i);
+    antlr4::tree::TerminalNode *NOT();
     antlr4::tree::TerminalNode *AND();
     antlr4::tree::TerminalNode *OR();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -420,6 +412,7 @@ public:
   public:
     AtomContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *BOOLVAL();
     antlr4::tree::TerminalNode *ID();
     antlr4::tree::TerminalNode *INTVAL();
     antlr4::tree::TerminalNode *FLOATVAL();

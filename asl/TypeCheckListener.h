@@ -83,8 +83,8 @@ public:
   void enterIfStmt(AslParser::IfStmtContext *ctx);
   void exitIfStmt(AslParser::IfStmtContext *ctx);
 
-  void enterProcCall(AslParser::ProcCallContext *ctx);
-  void exitProcCall(AslParser::ProcCallContext *ctx);
+ // void enterProcCall(AslParser::ProcCallContext *ctx);
+  //void exitProcCall(AslParser::ProcCallContext *ctx);
   
   void enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
   void exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
@@ -112,6 +112,22 @@ public:
   
   void enterWhile(AslParser::WhileContext *ctx);
   void exitWhile(AslParser::WhileContext *ctx);
+  
+  void enterBoolean(AslParser::BooleanContext *ctx);
+  void exitBoolean(AslParser::BooleanContext *ctx);
+  
+  
+  void enterAtomrule(AslParser::AtomruleContext *ctx);
+  void exitAtomrule(AslParser::AtomruleContext *ctx);
+  
+  void enterAtom(AslParser::AtomContext *ctx);
+  void exitAtom(AslParser::AtomContext *ctx);
+  
+  void enterArrayvalue(AslParser::ArrayvalueContext *ctx);
+  void exitArrayvalue(AslParser::ArrayvalueContext *ctx);
+  
+  void enterCallfunction(AslParser::CallfunctionContext *ctx);
+  void exitCallfunction(AslParser::CallfunctionContext *ctx);
 
   /*void enterExprIdent(AslParser::ExprIdentContext *ctx);
   void exitExprIdent(AslParser::ExprIdentContext *ctx);

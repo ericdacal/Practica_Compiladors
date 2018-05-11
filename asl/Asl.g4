@@ -78,8 +78,6 @@ statement
         : left_expr ASSIGN expr ';'           # assignStmt
           // if-then-else statement (else is optional)
         | IF expr THEN statements (ELSE statements)? ENDIF       # ifStmt
-          // A function/procedure call has a list of arguments in parenthesis (possibly empty)
-        | ID '(' ')' ';'                      # procCall
           // Read a variable
         | READ left_expr ';'                  # readStmt
           // While loop
@@ -104,17 +102,18 @@ expr
         : '(' expr ')'                               # parenthesis   
         | expr op=(MUL|DIV) expr                     # arithmetic
         | expr op=(PLUS|SUB) expr                    # arithmetic
-        | expr AND expr                              # boolean
-        | expr OR expr                               # boolean
-        | NOT expr                                   # boolean
         | expr op=(EQUAL|DIFF|LT|GT|LTE|GTE) expr    # relational
+        | op=NOT expr                                # boolean
+        | expr op=AND expr                           # boolean
+        | expr op=OR expr                            # boolean
         | op=(PLUS|SUB) expr                         # value
         | ID '(' (expr)? (',' expr)* ')'             # callfunction        
         | ID '[' expr ']'                            # arrayvalue
         | atom                                       # atomrule
         ;
 
-atom    : ID
+atom    : BOOLVAL
+        | ID
         | INTVAL
         | FLOATVAL
         | CHARVAL
@@ -158,6 +157,7 @@ DO        : 'do' ;
 READ      : 'read' ;
 RETURN    : 'return';
 WRITE     : 'write' ;
+BOOLVAL   : ('false' | 'true');
 ID        : ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')* ;
 INTVAL    : ('0'..'9')+ ;
 FLOATVAL  : ('0'..'9')+ '.' ('0'..'9')* ;

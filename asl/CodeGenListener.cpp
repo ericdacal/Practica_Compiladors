@@ -154,17 +154,17 @@ void CodeGenListener::exitIfStmt(AslParser::IfStmtContext *ctx) {
   DEBUG_EXIT();
 }
 
-void CodeGenListener::enterProcCall(AslParser::ProcCallContext *ctx) {
-  DEBUG_ENTER();
-}
-void CodeGenListener::exitProcCall(AslParser::ProcCallContext *ctx) {
-  instructionList code;
+//void CodeGenListener::enterProcCall(AslParser::ProcCallContext *ctx) {
+ // DEBUG_ENTER();
+//}
+//void CodeGenListener::exitProcCall(AslParser::ProcCallContext *ctx) {
+//  instructionList code;
   // std::string name = ctx->ident()->ID()->getSymbol()->getText();
   //std::string name = ctx->ident()->getText();
   //code = instruction::CALL(name);
   //putCodeDecor(ctx, code);
-  DEBUG_EXIT();
-}
+//  DEBUG_EXIT();
+//}
 
 void CodeGenListener::enterReadStmt(AslParser::ReadStmtContext *ctx) {
   DEBUG_ENTER();

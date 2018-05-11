@@ -44,9 +44,6 @@ public:
   virtual void enterIfStmt(AslParser::IfStmtContext *ctx) = 0;
   virtual void exitIfStmt(AslParser::IfStmtContext *ctx) = 0;
 
-  virtual void enterProcCall(AslParser::ProcCallContext *ctx) = 0;
-  virtual void exitProcCall(AslParser::ProcCallContext *ctx) = 0;
-
   virtual void enterReadStmt(AslParser::ReadStmtContext *ctx) = 0;
   virtual void exitReadStmt(AslParser::ReadStmtContext *ctx) = 0;
 

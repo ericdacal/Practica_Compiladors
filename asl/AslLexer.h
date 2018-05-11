@@ -18,8 +18,8 @@ public:
     VAR = 22, INT = 23, BOOL = 24, FLOAT = 25, CHAR = 26, ARRAY = 27, OF = 28, 
     IF = 29, THEN = 30, ELSE = 31, ENDIF = 32, FUNC = 33, ENDFUNC = 34, 
     WHILE = 35, ENDWHILE = 36, DO = 37, READ = 38, RETURN = 39, WRITE = 40, 
-    ID = 41, INTVAL = 42, FLOATVAL = 43, CHARVAL = 44, STRING = 45, COMMENT = 46, 
-    WS = 47
+    BOOLVAL = 41, ID = 42, INTVAL = 43, FLOATVAL = 44, CHARVAL = 45, STRING = 46, 
+    COMMENT = 47, WS = 48
   };
 
   AslLexer(antlr4::CharStream *input);

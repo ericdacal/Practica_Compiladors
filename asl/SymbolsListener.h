@@ -88,8 +88,8 @@ public:
   void enterIfStmt(AslParser::IfStmtContext *ctx);
   void exitIfStmt(AslParser::IfStmtContext *ctx);
 
-  void enterProcCall(AslParser::ProcCallContext *ctx);
-  void exitProcCall(AslParser::ProcCallContext *ctx);
+  //void enterProcCall(AslParser::ProcCallContext *ctx);
+  //void exitProcCall(AslParser::ProcCallContext *ctx);
 
   void enterReadStmt(AslParser::ReadStmtContext *ctx);
   void exitReadStmt(AslParser::ReadStmtContext *ctx);
