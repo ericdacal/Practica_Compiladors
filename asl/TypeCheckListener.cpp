@@ -179,6 +179,7 @@ void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext 
             Errors.nonReferenceableExpression(ctx);
         }
     }
+    
     DEBUG_EXIT();
 }
 
@@ -308,6 +309,37 @@ void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   
 }
 
+void TypeCheckListener::enterReturnSt(AslParser::ReturnStContext *ctx) {
+  DEBUG_ENTER();
+}
+
+
+
+void TypeCheckListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
+  TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
+  TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
+  if(not Types.equalTypes(t1, t2)) {
+    Errors.incompatibleReturn(ctx);
+  }
+  DEBUG_EXIT();
+}
+
+void TypeCheckListener::enterReturn(AslParser::ReturnContext *ctx) {
+  DEBUG_ENTER();
+}
+
+
+void TypeCheckListener::exitReturn(AslParser::ReturnContext *ctx) {
+  if(ctx->expr() != NULL) {
+    TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
+    TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
+    if(not Types.equalTypes(t1, t2)) {
+      Errors.incompatibleReturn(ctx);
+    }
+  }
+  DEBUG_EXIT();
+}
+
 void TypeCheckListener::enterArrayvalue(AslParser::ArrayvalueContext *ctx) {
   DEBUG_ENTER();
 }
@@ -339,7 +371,6 @@ void TypeCheckListener::enterAtom(AslParser::AtomContext *ctx) {
 
 void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
   if(ctx->ID() != NULL) {
-    std::cout << "ID" << std::endl;
     std::string ident = ctx->ID()->getText();
     if(!Symbols.findInCurrentScope(ident)) {
         Errors.undeclaredIdent(ctx->ID());
@@ -368,7 +399,6 @@ void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
     putTypeDecor(ctx, t);
   }
   else if(ctx->BOOLVAL() != NULL)  {
-    std::cout << "BOOL" << std::endl;
     TypesMgr::TypeId t = Types.createBooleanTy();
     putTypeDecor(ctx, t);
   }

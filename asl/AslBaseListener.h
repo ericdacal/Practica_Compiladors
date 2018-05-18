@@ -64,6 +64,9 @@ public:
   virtual void enterReturn(AslParser::ReturnContext * /*ctx*/) override { }
   virtual void exitReturn(AslParser::ReturnContext * /*ctx*/) override { }
 
+  virtual void enterReturnSt(AslParser::ReturnStContext * /*ctx*/) override { }
+  virtual void exitReturnSt(AslParser::ReturnStContext * /*ctx*/) override { }
+
   virtual void enterLeft_expr(AslParser::Left_exprContext * /*ctx*/) override { }
   virtual void exitLeft_expr(AslParser::Left_exprContext * /*ctx*/) override { }
 

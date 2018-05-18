@@ -42,7 +42,8 @@ program : function+ EOF
         
 // A function has a name, a list of parameters and a list of statements
 function
-        : FUNC ID '(' ((ID ':' type)  (',' ID ':' type)*)? ')' output? declarations statements ENDFUNC
+        : FUNC ID '(' ((ID ':' type)  (',' ID ':' type)*)? ')' declarations statements ENDFUNC  
+        | FUNC ID '(' ((ID ':' type)  (',' ID ':' type)*)? ')' output declarations statements returnSt ENDFUNC 
         ;
 
 declarations
@@ -89,8 +90,15 @@ statement
           //Call a function
         | ID '(' (expr)? (',' expr)* ')' ';'     # callfunctionStmt
         
-        | RETURN (expr)* ';'                  # return
+        | RETURN (expr)? ';'                    # return
+        
         ;
+        
+
+returnSt
+      : RETURN (expr)? ';' 
+      ;
+      
 // Grammar for left expressions (l-values in C++)
 left_expr
         : ID

@@ -128,6 +128,12 @@ public:
   
   void enterCallfunction(AslParser::CallfunctionContext *ctx);
   void exitCallfunction(AslParser::CallfunctionContext *ctx);
+  
+  void enterReturnSt(AslParser::ReturnStContext *ctx);
+  void exitReturnSt(AslParser::ReturnStContext *ctx);
+  
+  void enterReturn(AslParser::ReturnContext *ctx);
+  void exitReturn(AslParser::ReturnContext *ctx);
 
   /*void enterExprIdent(AslParser::ExprIdentContext *ctx);
   void exitExprIdent(AslParser::ExprIdentContext *ctx);

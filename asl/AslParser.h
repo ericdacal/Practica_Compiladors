@@ -25,7 +25,8 @@ public:
   enum {
     RuleProgram = 0, RuleFunction = 1, RuleDeclarations = 2, RuleVariable_decl = 3, 
     RuleOutput = 4, RuleType = 5, RuleBasic_type = 6, RuleStatements = 7, 
-    RuleStatement = 8, RuleLeft_expr = 9, RuleExpr = 10, RuleAtom = 11
+    RuleStatement = 8, RuleReturnSt = 9, RuleLeft_expr = 10, RuleExpr = 11, 
+    RuleAtom = 12
   };
 
   AslParser(antlr4::TokenStream *input);
@@ -47,6 +48,7 @@ public:
   class Basic_typeContext;
   class StatementsContext;
   class StatementContext;
+  class ReturnStContext;
   class Left_exprContext;
   class ExprContext;
   class AtomContext; 
@@ -76,9 +78,10 @@ public:
     DeclarationsContext *declarations();
     StatementsContext *statements();
     antlr4::tree::TerminalNode *ENDFUNC();
-    OutputContext *output();
     std::vector<TypeContext *> type();
     TypeContext* type(size_t i);
+    OutputContext *output();
+    ReturnStContext *returnSt();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -274,13 +277,26 @@ public:
     ReturnContext(StatementContext *ctx);
 
     antlr4::tree::TerminalNode *RETURN();
-    std::vector<ExprContext *> expr();
-    ExprContext* expr(size_t i);
+    ExprContext *expr();
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
   };
 
   StatementContext* statement();
+
+  class  ReturnStContext : public antlr4::ParserRuleContext {
+  public:
+    ReturnStContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *RETURN();
+    ExprContext *expr();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  ReturnStContext* returnSt();
 
   class  Left_exprContext : public antlr4::ParserRuleContext {
   public:

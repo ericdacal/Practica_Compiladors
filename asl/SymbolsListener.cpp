@@ -95,9 +95,15 @@ void SymbolsListener::exitFunction(AslParser::FunctionContext *ctx) {
           lParamsTy.push_back(t);
         }
     }
-    TypesMgr::TypeId tRet = getTypeDecor(ctx->output());
-    TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
-    if(!error) Symbols.addFunction(ident, tFunc);
+    if(ctx->output() != NULL) {
+      TypesMgr::TypeId tRet = getTypeDecor(ctx->output());
+      TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
+      if(!error) Symbols.addFunction(ident, tFunc);
+    }
+    else {
+      TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, Types.createVoidTy()); 
+      if(!error) Symbols.addFunction(ident, tFunc);
+    }
     Symbols.popScope();
     DEBUG_EXIT();
 }

@@ -62,6 +62,9 @@ public:
   virtual void enterReturn(AslParser::ReturnContext *ctx) = 0;
   virtual void exitReturn(AslParser::ReturnContext *ctx) = 0;
 
+  virtual void enterReturnSt(AslParser::ReturnStContext *ctx) = 0;
+  virtual void exitReturnSt(AslParser::ReturnStContext *ctx) = 0;
+
   virtual void enterLeft_expr(AslParser::Left_exprContext *ctx) = 0;
   virtual void exitLeft_expr(AslParser::Left_exprContext *ctx) = 0;
 
