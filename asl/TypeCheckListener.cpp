@@ -162,7 +162,7 @@ void TypeCheckListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext
 }
 
 void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
-    std::string ident = ctx->getText();
+    std::string ident = ctx->ID()->getText();
     TypesMgr::TypeId t1 = Symbols.getType(ident);
     if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
         Errors.isNotCallable(ctx);
@@ -226,7 +226,8 @@ void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
       }
   }
   putTypeDecor(ctx, t1);
-  putIsLValueDecor(ctx, true); //LValueDecor cuando el contexto es referenciable
+  if(Types.isFunctionTy(t1)) putIsLValueDecor(ctx, false); 
+  else putIsLValueDecor(ctx, true); //LValueDecor cuando el contexto es referenciable
   DEBUG_EXIT();
 }
 
@@ -372,12 +373,12 @@ void TypeCheckListener::enterAtom(AslParser::AtomContext *ctx) {
 void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
   if(ctx->ID() != NULL) {
     std::string ident = ctx->ID()->getText();
-    if(!Symbols.findInCurrentScope(ident)) {
-        Errors.undeclaredIdent(ctx->ID());
+    if(Symbols.findInStack(ident) > -1) {
+      TypesMgr::TypeId t1 = Symbols.getType(ident);
+      putTypeDecor(ctx, t1);
+      t1 = getTypeDecor(ctx);
     }
-    TypesMgr::TypeId t1 = Symbols.getType(ident);
-    putTypeDecor(ctx, t1);
-    t1 = getTypeDecor(ctx);
+    else Errors.undeclaredIdent(ctx->ID());
   }
   else if(ctx->INTVAL() != NULL) {
     //std::cout << "INTVAL" << std::endl;

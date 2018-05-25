@@ -78,6 +78,7 @@ void SymbolsListener::enterFunction(AslParser::FunctionContext *ctx) {
   putScopeDecor(ctx, sc);
 }
 void SymbolsListener::exitFunction(AslParser::FunctionContext *ctx) {
+    Symbols.popScope();
     bool error = false;
     std::string ident = ctx->ID(0)->getText();
     if (Symbols.findInCurrentScope(ident)) {
@@ -101,10 +102,11 @@ void SymbolsListener::exitFunction(AslParser::FunctionContext *ctx) {
       if(!error) Symbols.addFunction(ident, tFunc);
     }
     else {
-      TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, Types.createVoidTy()); 
+      TypesMgr::TypeId tRet = Types.createVoidTy();
+      TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
+      //std::cout << Types.to_string(tFunc) << " " << Types.to_string(tRet) << std::endl;
       if(!error) Symbols.addFunction(ident, tFunc);
     }
-    Symbols.popScope();
     DEBUG_EXIT();
 }
   
