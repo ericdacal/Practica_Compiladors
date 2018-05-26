@@ -167,19 +167,24 @@ void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext 
     if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
         Errors.isNotCallable(ctx);
     }
-    if(Types.getNumOfParameters(t1) != ctx->expr().size()) {
-        Errors.numberOfParameters(ctx);
+    else if(Types.isErrorTy(t1)) 
+    {
+        Errors.undeclaredIdent(ctx->ID());
     }
-    for(uint i = 1; i < Types.getNumOfParameters(t1); ++i) {
-        TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(i));
-        if(not Types.equalTypes(Types.getParameterType(t1,i), t2)) {
-            Errors.incompatibleParameter(ctx, i, ctx->expr(i));
-        }
-        if(not getIsLValueDecor(ctx->expr(i))) {
-            Errors.nonReferenceableExpression(ctx);
-        }
+    else {
+      if(Types.getNumOfParameters(t1) != ctx->expr().size()) {
+          Errors.numberOfParameters(ctx);
+      }
+      for(uint i = 1; i < Types.getNumOfParameters(t1); ++i) {
+          TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(i));
+          if(not Types.equalTypes(Types.getParameterType(t1,i), t2)) {
+              Errors.incompatibleParameter(ctx, i, ctx->expr(i));
+          }
+          if(not getIsLValueDecor(ctx->expr(i))) {
+              Errors.nonReferenceableExpression(ctx);
+          }
+      }
     }
-    
     DEBUG_EXIT();
 }
 
