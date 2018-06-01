@@ -224,11 +224,19 @@ void TypeCheckListener::enterLeft_expr(AslParser::Left_exprContext *ctx) {
 void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if(Types.isArrayTy(t1)) {
-      TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
-      if(Types.isIntegerTy(t2)) {
-          Errors.nonIntegerIndexInArrayAccess(ctx);
-      }
+  if(ctx->expr() != NULL) 
+  {
+    std::cout << Types.to_string(t1) << std::endl;
+    if(!Types.isArrayTy(t1)) 
+    {
+      Errors.nonArrayInArrayAccess(ctx);
+    }
+    TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
+    if(!Types.isIntegerTy(t2)) 
+    {
+        Errors.nonIntegerIndexInArrayAccess(ctx);
+    }
+    
   }
   putTypeDecor(ctx, t1);
   if(Types.isFunctionTy(t1)) putIsLValueDecor(ctx, false); 
@@ -319,13 +327,29 @@ void TypeCheckListener::enterReturnSt(AslParser::ReturnStContext *ctx) {
   DEBUG_ENTER();
 }
 
-
-
 void TypeCheckListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
-  TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
-  TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
-  if(not Types.equalTypes(t1, t2)) {
-    Errors.incompatibleReturn(ctx);
+
+  if(ctx->expr() != NULL) {
+    //std::cout << "Entro ReturnSt" << std::endl;
+    TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
+    TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
+    
+    //std::cout << ctx->expr()->getText() << " " << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
+    if(not Types.equalTypes(t1, Types.getFuncReturnType(t2))) {
+      Errors.incompatibleReturn(ctx);
+    }
+  }
+  else 
+  {
+
+    TypesMgr::TypeId t1 = Types.createVoidTy();
+    //std::cout << "t2" << std::endl;
+    TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
+    //std::cout << "t2" << std::endl;
+    if(not Types.equalTypes(t1, Types.getFuncReturnType(t2))) {
+      Errors.incompatibleReturn(ctx);
+    }
+    
   }
   DEBUG_EXIT();
 }
@@ -336,13 +360,17 @@ void TypeCheckListener::enterReturn(AslParser::ReturnContext *ctx) {
 
 
 void TypeCheckListener::exitReturn(AslParser::ReturnContext *ctx) {
-  if(ctx->expr() != NULL) {
+  //std::cout << "Entro Return" << std::endl;
+  if(ctx->expr() != NULL) 
+  {
     TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
     TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
-    if(not Types.equalTypes(t1, t2)) {
+    std::cout << ctx->expr()->getText() << ": " << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
+    if(not Types.equalTypes(t1, Types.getFuncReturnType(t2))) {
       Errors.incompatibleReturn(ctx);
     }
   }
+  //std::cout << "Salgo Return" << std::endl;
   DEBUG_EXIT();
 }
 
@@ -356,9 +384,13 @@ void TypeCheckListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   if(!Symbols.findInCurrentScope(ident)) {
       Errors.undeclaredIdent(ctx->ID());
   }
-  TypesMgr::TypeId t1 = Symbols.getType(ident);
-  putTypeDecor(ctx, t1);
-  t1 = getTypeDecor(ctx);
+  TypesMgr::TypeId t = getTypeDecor(ctx->expr());
+  if(!Types.isIntegerTy(t)) Errors.nonIntegerIndexInArrayAccess (ctx);
+  else {
+    TypesMgr::TypeId t1 = Symbols.getType(ident);
+    putTypeDecor(ctx, t1);
+    t1 = getTypeDecor(ctx);
+  }
   DEBUG_EXIT();
 }
 

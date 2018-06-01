@@ -60,6 +60,8 @@ SymbolsListener::SymbolsListener(TypesMgr       & Types,
   Errors{Errors} {
 }
 
+
+
 void SymbolsListener::enterProgram(AslParser::ProgramContext *ctx) {
   DEBUG_ENTER();
   SymTable::ScopeId sc = Symbols.pushNewScope("$global$");
@@ -71,42 +73,100 @@ void SymbolsListener::exitProgram(AslParser::ProgramContext *ctx) {
   DEBUG_EXIT();
 }
 
+TypesMgr::TypeId SymbolsListener::ReturnType(AslParser::FunctionContext *ctx, bool output,int i) 
+{
+  TypesMgr::TypeId t;
+  if(!output) {
+    if(ctx->type(i)->basic_type() != NULL)
+    {
+        if(ctx->type(i)->basic_type()->INT() != NULL) t = Types.createIntegerTy();
+        else if(ctx->type(i)->basic_type()->BOOL() != NULL) t = Types.createBooleanTy();
+        else if(ctx->type(i)->basic_type()->FLOAT() != NULL) t = Types.createFloatTy();
+        else if(ctx->type(i)->basic_type()->CHAR() != NULL) t = Types.createCharacterTy();
+        return t;
+    }
+    else 
+    {
+      uint size = atoi((ctx->type(i)->INTVAL()->getText()).c_str());
+      if(ctx->type(i)->basic_type()->INT() != NULL) t = Types.createIntegerTy();
+      else if(ctx->type(i)->basic_type()->BOOL() != NULL) t = Types.createBooleanTy();
+      else if(ctx->type(i)->basic_type()->FLOAT() != NULL) t = Types.createFloatTy();
+      else if(ctx->type(i)->basic_type()->CHAR() != NULL) t = Types.createCharacterTy();
+      TypesMgr::TypeId tf = Types.createArrayTy(size,t);
+      return tf;
+    
+    }
+  }
+  else 
+  {
+    if(ctx->output()->type()->basic_type() != NULL)
+      {
+
+          if(ctx->output()->type()->basic_type()->INT() != NULL) t = Types.createIntegerTy();
+          else if(ctx->output()->type()->basic_type()->BOOL() != NULL) t = Types.createBooleanTy();
+          else if(ctx->output()->type()->basic_type()->FLOAT() != NULL) t = Types.createFloatTy();
+          else if(ctx->output()->type()->basic_type()->CHAR() != NULL) t = Types.createCharacterTy();
+          return t;
+      }
+      else 
+      {
+        uint size = atoi((ctx->output()->type()->INTVAL()->getText()).c_str());
+        if(ctx->output()->type()->basic_type()->INT() != NULL) t = Types.createIntegerTy();
+        else if(ctx->output()->type()->basic_type()->BOOL() != NULL) t = Types.createBooleanTy();
+        else if(ctx->output()->type()->basic_type()->FLOAT() != NULL) t = Types.createFloatTy();
+        else if(ctx->output()->type()->basic_type()->CHAR() != NULL) t = Types.createCharacterTy();
+        TypesMgr::TypeId tf = Types.createArrayTy(size,t);
+        return tf;
+    }
+  }
+}
+
+
 void SymbolsListener::enterFunction(AslParser::FunctionContext *ctx) {
   DEBUG_ENTER();
-  std::string funcName = ctx->ID(0)->getText();
-  SymTable::ScopeId sc = Symbols.pushNewScope(funcName);
-  putScopeDecor(ctx, sc);
-}
-void SymbolsListener::exitFunction(AslParser::FunctionContext *ctx) {
-    Symbols.popScope();
-    bool error = false;
-    std::string ident = ctx->ID(0)->getText();
-    if (Symbols.findInCurrentScope(ident)) {
-      Errors.declaredIdent(ctx->ID(0));
-      error = true;
-    }
+  std::string ident = ctx->ID(0)->getText();
+  std::vector<std::string> names;
+  //std::cout << "func: " << ident << std::endl;
+  if (Symbols.findInStack(ident) > -1) 
+  {
+    //std::cout << "ERROR" << std::endl;
+    Errors.declaredIdent(ctx->ID(0));
+    SymTable::ScopeId sc = Symbols.pushNewScope(ident);
+    putScopeDecor(ctx, sc);
+  }
+  else 
+  {
+    //std::cout << "Enter function " << ident << std::endl;
     std::vector<TypesMgr::TypeId> lParamsTy;
-    for(uint i = 1; i < ctx->ID().size();++i) {
-        std::string ident = ctx->ID(i)->getText();
-        if (Symbols.findInCurrentScope(ident)) {
-              Errors.declaredIdent(ctx->ID(i));
-        }
-        else {
-          TypesMgr::TypeId t = getTypeDecor(ctx->type(i));
-          lParamsTy.push_back(t);
-        }
+    for(uint i = 1; i < ctx->ID().size();++i) 
+    {
+        TypesMgr::TypeId tf = ReturnType(ctx, false,i-1); 
+        lParamsTy.push_back(tf);
+        names.push_back(ctx->ID(i)->getText());
     }
+    
     if(ctx->output() != NULL) {
-      TypesMgr::TypeId tRet = getTypeDecor(ctx->output());
-      TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
-      if(!error) Symbols.addFunction(ident, tFunc);
+        TypesMgr::TypeId t =  ReturnType(ctx, true,0); 
+        TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, t); 
+        Symbols.addFunction(ident, tFunc);
     }
     else {
       TypesMgr::TypeId tRet = Types.createVoidTy();
       TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
-      //std::cout << Types.to_string(tFunc) << " " << Types.to_string(tRet) << std::endl;
-      if(!error) Symbols.addFunction(ident, tFunc);
+      Symbols.addFunction(ident, tFunc);
     }
+    
+    SymTable::ScopeId sc = Symbols.pushNewScope(ident);
+    for(uint i = 0; i < lParamsTy.size(); ++i)  
+    {
+        Symbols.addParameter(names[i],lParamsTy[i]);
+    }
+    putScopeDecor(ctx, sc);
+  }
+
+}
+void SymbolsListener::exitFunction(AslParser::FunctionContext *ctx) {
+    Symbols.popScope();
     DEBUG_EXIT();
 }
   

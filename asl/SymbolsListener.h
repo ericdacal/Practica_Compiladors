@@ -71,6 +71,8 @@ public:
   
   void enterOutput(AslParser::OutputContext *ctx);
   void exitOutput(AslParser::OutputContext *ctx);
+  
+  TypesMgr::TypeId ReturnType(AslParser::FunctionContext *ctx, bool output,int i);
 
   void enterType(AslParser::TypeContext *ctx);
   void exitType(AslParser::TypeContext *ctx);
@@ -131,6 +133,7 @@ private:
   SymTable       & Symbols;
   TreeDecoration & Decorations;
   SemErrors      & Errors;
+  bool Function_error;
 
   // Getters for the necessary tree node atributes:
   //   Scope and Type

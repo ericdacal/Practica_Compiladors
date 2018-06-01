@@ -77,11 +77,11 @@ public:
     antlr4::tree::TerminalNode* ID(size_t i);
     DeclarationsContext *declarations();
     StatementsContext *statements();
+    ReturnStContext *returnSt();
     antlr4::tree::TerminalNode *ENDFUNC();
+    OutputContext *output();
     std::vector<TypeContext *> type();
     TypeContext* type(size_t i);
-    OutputContext *output();
-    ReturnStContext *returnSt();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
     virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;

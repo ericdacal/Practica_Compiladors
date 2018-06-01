@@ -42,8 +42,8 @@ program : function+ EOF
         
 // A function has a name, a list of parameters and a list of statements
 function
-        : FUNC ID '(' ((ID ':' type)  (',' ID ':' type)*)? ')' declarations statements ENDFUNC  
-        | FUNC ID '(' ((ID ':' type)  (',' ID ':' type)*)? ')' output declarations statements returnSt ENDFUNC 
+        : FUNC ID '(' ((ID ':' type)  (',' ID ':' type)*)? ')' output? declarations statements returnSt ENDFUNC 
+        | FUNC ID '(' ((ID ':' type)  (',' ID ':' type)*)? ')' output? declarations statements ENDFUNC  
         ;
 
 declarations
