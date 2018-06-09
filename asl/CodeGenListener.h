@@ -88,6 +88,9 @@ public:
 
   //void enterProcCall(AslParser::ProcCallContext *ctx);
   //void exitProcCall(AslParser::ProcCallContext *ctx);
+  
+  void enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
+  void exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
 
   void enterReadStmt(AslParser::ReadStmtContext *ctx);
   void exitReadStmt(AslParser::ReadStmtContext *ctx);
@@ -106,9 +109,22 @@ public:
 
   void enterRelational(AslParser::RelationalContext *ctx);
   void exitRelational(AslParser::RelationalContext *ctx);
-
+  
+  void enterBoolean(AslParser::BooleanContext *ctx);
+  void exitBoolean(AslParser::BooleanContext *ctx);
+  
+  void enterParenthesis(AslParser::ParenthesisContext *ctx);
+  void exitParenthesis(AslParser::ParenthesisContext *ctx);
+  
   void enterValue(AslParser::ValueContext *ctx);
   void exitValue(AslParser::ValueContext *ctx);
+  
+  void enterAtomrule(AslParser::AtomruleContext *ctx);
+  void exitAtomrule(AslParser::AtomruleContext *ctx);
+
+  void enterAtom(AslParser::AtomContext *ctx);
+  void exitAtom(AslParser::AtomContext *ctx);
+    
 
   //void enterExprIdent(AslParser::ExprIdentContext *ctx);
   //void exitExprIdent(AslParser::ExprIdentContext *ctx);

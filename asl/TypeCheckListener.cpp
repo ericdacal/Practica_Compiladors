@@ -304,6 +304,15 @@ void TypeCheckListener::exitValue(AslParser::ValueContext *ctx) {
   DEBUG_EXIT();
 }
 
+void TypeCheckListener::enterParenthesis(AslParser::ParenthesisContext *ctx){
+  DEBUG_ENTER();
+    
+}
+void TypeCheckListener::exitParenthesis(AslParser::ParenthesisContext *ctx){ 
+  TypesMgr::TypeId t = getTypeDecor(ctx->expr());
+  putTypeDecor(ctx,t);
+  DEBUG_EXIT();
+}
 
 void TypeCheckListener::enterBoolean(AslParser::BooleanContext *ctx) {
   DEBUG_ENTER();

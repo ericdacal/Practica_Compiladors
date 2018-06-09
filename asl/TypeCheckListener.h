@@ -88,6 +88,9 @@ public:
   
   void enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
   void exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
+  
+  void enterParenthesis(AslParser::ParenthesisContext *ctx);
+  void exitParenthesis(AslParser::ParenthesisContext *ctx);
 
   void enterReadStmt(AslParser::ReadStmtContext *ctx);
   void exitReadStmt(AslParser::ReadStmtContext *ctx);
@@ -115,8 +118,7 @@ public:
   
   void enterBoolean(AslParser::BooleanContext *ctx);
   void exitBoolean(AslParser::BooleanContext *ctx);
-  
-  
+
   void enterAtomrule(AslParser::AtomruleContext *ctx);
   void exitAtomrule(AslParser::AtomruleContext *ctx);
   
