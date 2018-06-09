@@ -260,7 +260,7 @@ void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
         ++error;
     }
     
-    if (error == 0) putTypeDecor(ctx, t1);
+    if (error == 0) putTypeDecor(ctx, t2);
   }
   else putTypeDecor(ctx, t1);
   if(Types.isFunctionTy(t1)) putIsLValueDecor(ctx, false); 

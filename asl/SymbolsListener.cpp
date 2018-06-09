@@ -309,6 +309,10 @@ void SymbolsListener::exitWriteString(AslParser::WriteStringContext *ctx) {
 }
 
 void SymbolsListener::enterLeft_expr(AslParser::Left_exprContext *ctx) {
+  std::string ident = ctx->ID()->getText();
+  if (Symbols.findInStack(ident) == -1) {
+    Errors.undeclaredIdent(ctx->ID());
+  }
   DEBUG_ENTER();
 }
 void SymbolsListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
