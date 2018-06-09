@@ -193,10 +193,11 @@ void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext 
       }
       for(uint i = 1; i < Types.getNumOfParameters(t1); ++i) {
           TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(i));
+          std::string name = ctx->expr(i)->getText();
           if(not Types.equalTypes(Types.getParameterType(t1,i), t2)) {
               Errors.incompatibleParameter(ctx, i, ctx->expr(i));
           }
-          if(not getIsLValueDecor(ctx->expr(i))) {
+          if(not getIsLValueDecor(ctx->expr(i)) and not Symbols.findInCurrentScope(name)) {
               Errors.nonReferenceableExpression(ctx);
           }
       }
@@ -350,7 +351,6 @@ void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
       if(ctx->expr(i) == NULL) Errors.numberOfParameters(ctx);
       else 
       {
-        //std::cout << "Tipo expr: " << Types.to_string(getTypeDecor(ctx->expr(i))) << " Tipo parameter: " << Types.to_string(Types.getParameterType(t1,i)) << std::endl;
         if(!Types.equalTypes(getTypeDecor(ctx->expr(i)),Types.getParameterType(t1,i))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
       }
 
@@ -362,6 +362,8 @@ void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   DEBUG_EXIT();
   
 }
+
+
 
 void TypeCheckListener::enterReturnSt(AslParser::ReturnStContext *ctx) {
   DEBUG_ENTER();
