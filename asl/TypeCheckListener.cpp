@@ -115,7 +115,7 @@ void TypeCheckListener::enterAssignStmt(AslParser::AssignStmtContext *ctx) {
   DEBUG_ENTER();
 }
 
-//f[3] = 3;
+
 void TypeCheckListener::exitAssignStmt(AslParser::AssignStmtContext *ctx) 
 {
   TypesMgr::TypeId t1 = getTypeDecor(ctx->left_expr());
@@ -240,19 +240,29 @@ void TypeCheckListener::enterLeft_expr(AslParser::Left_exprContext *ctx) {
 void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
+  int error = 0;
   if(ctx->expr() != NULL) 
   {
     if(!Types.isArrayTy(t1)) 
     {
       Errors.nonArrayInArrayAccess(ctx);
+      TypesMgr::TypeId t = Types.createErrorTy();
+      putTypeDecor(ctx, t);
+      ++error;
     }
+    
     TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
     if(!Types.isIntegerTy(t2)) 
     {
         Errors.nonIntegerIndexInArrayAccess(ctx->expr());
+        TypesMgr::TypeId t = Types.createErrorTy();
+        putTypeDecor(ctx, t);
+        ++error;
     }
+    
+    if (error == 0) putTypeDecor(ctx, t1);
   }
-  putTypeDecor(ctx, t1);
+  else putTypeDecor(ctx, t1);
   if(Types.isFunctionTy(t1)) putIsLValueDecor(ctx, false); 
   else putIsLValueDecor(ctx, true); //LValueDecor cuando el contexto es referenciable
   DEBUG_EXIT();
