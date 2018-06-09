@@ -123,10 +123,7 @@ void TypeCheckListener::exitAssignStmt(AslParser::AssignStmtContext *ctx)
   //std::cout << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
   if(Types.isFunctionTy(t2)) {
     TypesMgr::TypeId t3 = Types.getFuncReturnType(t2);
-    if(Types.isVoidTy(t3)) {
-      Errors.isNotFunction(ctx->expr());
-    }
-    else if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t3)) and (not Types.copyableTypes(t1, t3))) {
+    if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t3)) and (not Types.copyableTypes(t1, t3))) {
       Errors.incompatibleAssignment(ctx->ASSIGN());
     }
   } 
@@ -182,10 +179,10 @@ void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext 
     if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
         Errors.isNotCallable(ctx);
     }
-    else if(Types.isErrorTy(t1)) 
+    /*else if(Types.isErrorTy(t1)) 
     {
       Errors.undeclaredIdent(ctx->ID());
-    }
+    }*/
     else {
       if(Types.getNumOfParameters(t1) != ctx->expr().size()) 
       {
@@ -436,9 +433,9 @@ void TypeCheckListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
   
-  if((!Symbols.findInCurrentScope(ident) or !Symbols.findInStack(ident)) and !Types.isFunctionTy(t1)) {
+  /*if((!Symbols.findInCurrentScope(ident) or !Symbols.findInStack(ident)) and !Types.isFunctionTy(t1)) {
       Errors.undeclaredIdent(ctx->ID());
-  }
+  }*/
   if(!Types.isArrayTy(t1) and not Types.isErrorTy(t1)) {
     Errors.nonArrayInArrayAccess(ctx);
   }
@@ -473,9 +470,9 @@ void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
       putTypeDecor(ctx, t1);
       t1 = getTypeDecor(ctx);
     }
-    else {
+    /*else {
       Errors.undeclaredIdent(ctx->ID());
-    }
+    }*/
   }
   else if(ctx->INTVAL() != NULL) {
     //std::cout << "INTVAL" << std::endl;

@@ -351,6 +351,20 @@ void SymbolsListener::exitRelational(AslParser::RelationalContext *ctx) {
   DEBUG_EXIT();
 }
 
+void SymbolsListener::enterAtom(AslParser::AtomContext *ctx){ 
+  DEBUG_ENTER();
+}
+void SymbolsListener::exitAtom(AslParser::AtomContext *ctx){
+    if(ctx->ID() != NULL) {
+    std::string ident = ctx->ID()->getText();
+    if(Symbols.findInStack(ident) <= -1) {
+        Errors.undeclaredIdent(ctx->ID());
+    }
+  }
+  DEBUG_EXIT();
+}
+
+
 void SymbolsListener::enterValue(AslParser::ValueContext *ctx) {
   DEBUG_ENTER();
 }
