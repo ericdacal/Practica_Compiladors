@@ -68,7 +68,6 @@ void SymbolsListener::enterProgram(AslParser::ProgramContext *ctx) {
   putScopeDecor(ctx, sc);
 }
 void SymbolsListener::exitProgram(AslParser::ProgramContext *ctx) {
-  // Symbols.print();
   Symbols.popScope();
   DEBUG_EXIT();
 }
@@ -127,17 +126,16 @@ void SymbolsListener::enterFunction(AslParser::FunctionContext *ctx) {
   DEBUG_ENTER();
   std::string ident = ctx->ID(0)->getText();
   std::vector<std::string> names;
-  //std::cout << "func: " << ident << std::endl;
   if (Symbols.findInStack(ident) > -1) 
   {
-    //std::cout << "ERROR" << std::endl;
+
     Errors.declaredIdent(ctx->ID(0));
     SymTable::ScopeId sc = Symbols.pushNewScope(ident);
     putScopeDecor(ctx, sc);
   }
   else 
   {
-    //std::cout << "Enter function " << ident << std::endl;
+
     std::vector<TypesMgr::TypeId> lParamsTy;
     for(uint i = 1; i < ctx->ID().size();++i) 
     {
@@ -258,36 +256,6 @@ void SymbolsListener::exitIfStmt(AslParser::IfStmtContext *ctx) {
   DEBUG_EXIT();
 }
 
-/*void SymbolsListener::enterProcCall(AslParser::ProcCallContext *ctx) {
-  DEBUG_ENTER();
-  std::string funcName = ctx->ID()->getText();
-  SymTable::ScopeId sc = Symbols.pushNewScope(funcName);
-  putScopeDecor(ctx, sc);
-}
-void SymbolsListener::exitProcCall(AslParser::ProcCallContext *ctx) {
-  Symbols.popScope();
-  std::string ident = ctx->ID()->getText();
-  if (Symbols.findInCurrentScope(ident)) {
-    Errors.declaredIdent(ctx->ID());
-  }
-  else {
-    std::vector<TypesMgr::TypeId> lParamsTy;
-    for(uint i = ; i < ctx->ID().size();++i) {
-        std::string ident = ctx->ID()->getText();
-        if (Symbols.findInCurrentScope(ident)) {
-              Errors.declaredIdent(ctx->ID());
-        }
-        else {
-          TypesMgr::TypeId t = getTypeDecor(ctx->type(i));
-          lParamsTy.push_back(t);
-        }
-    }
-    TypesMgr::TypeId tRet = Types.createVoidTy();
-    TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
-    Symbols.addFunction(ident, tFunc);
-  }
-  DEBUG_EXIT();
-}*/
 
 void SymbolsListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
   DEBUG_ENTER();
@@ -381,7 +349,7 @@ void SymbolsListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
   
-  if(!Symbols.findInCurrentScope(ident)){
+  if(Symbols.findInStack(ident) == -1){
       Errors.undeclaredIdent(ctx->ID());
   }
   DEBUG_EXIT();

@@ -120,7 +120,6 @@ void TypeCheckListener::exitAssignStmt(AslParser::AssignStmtContext *ctx)
 {
   TypesMgr::TypeId t1 = getTypeDecor(ctx->left_expr());
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
-  //std::cout << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
   if(Types.isFunctionTy(t2)) {
     if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t2)) and (not Types.equalTypes(t1, t2))) {
       Errors.incompatibleAssignment(ctx->ASSIGN());
@@ -161,17 +160,6 @@ void TypeCheckListener::exitWhile(AslParser::WhileContext *ctx) {
   DEBUG_EXIT();
 }
 
-/*void TypeCheckListener::enterProcCall(AslParser::ProcCallContext *ctx) {
-  DEBUG_ENTER();
-}
-void TypeCheckListener::exitProcCall(AslParser::ProcCallContext *ctx) {
-  std::string ident = ctx->getText();
-  TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
-    Errors.isNotCallable(ctx);
-  }
-  DEBUG_EXIT();
-}*/
 void TypeCheckListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
     DEBUG_ENTER();
 }
@@ -260,7 +248,7 @@ void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
           putTypeDecor(ctx, t);
           ++error;
       }
-      //std::cout << "Tipo: " << Types.to_string(t1) << std::endl;
+
       if (error == 0 and Types.isArrayTy(t1)) putTypeDecor(ctx, Types.getArrayElemType(t1));
       else if(error == 0) putTypeDecor(ctx, t1);
   }
@@ -279,7 +267,7 @@ void TypeCheckListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   if(Types.isFunctionTy(t1)) t1 = Types.getFuncReturnType(t1); 
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
   if(Types.isFunctionTy(t2)) t2 = Types.getFuncReturnType(t2); 
-  //std::cout << t1 << " " << t2 << " Expr:" + ctx->expr(0)->getText() + " " + ctx->expr(1)->getText()  + " Tipos: " << Types.to_string (t1) << " " << Types.to_string (t2) << std::endl;
+
   if (((not Types.isErrorTy(t1)) and (not Types.isNumericTy(t1))) or
       ((not Types.isErrorTy(t2)) and (not Types.isNumericTy(t2))))
     Errors.incompatibleOperator(ctx->op);
@@ -293,7 +281,7 @@ void TypeCheckListener::enterRelational(AslParser::RelationalContext *ctx) {
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitRelational(AslParser::RelationalContext *ctx) {
-  //expr op=(EQUAL|DIFF|LT|GT|LTE|GTE) expr
+
   TypesMgr::TypeId t1 = getTypeDecor(ctx->expr(0));
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
   std::string oper = ctx->op->getText();
@@ -364,9 +352,10 @@ void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
                 if(!Types.equalTypes(getTypeDecor(ctx->expr(i)),Types.getParameterType(t1,i))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
             }
         }
-        putTypeDecor(ctx, Types.getFuncReturnType(t1));
-        t1 = getTypeDecor(ctx);
+       
     }
+     putTypeDecor(ctx, Types.getFuncReturnType(t1));
+     t1 = getTypeDecor(ctx);
   }
   DEBUG_EXIT();
   
@@ -381,11 +370,9 @@ void TypeCheckListener::enterReturnSt(AslParser::ReturnStContext *ctx) {
 void TypeCheckListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
 
   if(ctx->expr() != NULL) {
-    //std::cout << "Entro ReturnSt" << std::endl;
     TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
     TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
     
-    //std::cout << ctx->expr()->getText() << " " << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
     if(not Types.equalTypes(t1, Types.getFuncReturnType(t2))) {
       Errors.incompatibleReturn(ctx);
     }
@@ -394,9 +381,7 @@ void TypeCheckListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
   {
 
     TypesMgr::TypeId t1 = Types.createVoidTy();
-    //std::cout << "t2" << std::endl;
     TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
-    //std::cout << "t2" << std::endl;
     if(not Types.equalTypes(t1, Types.getFuncReturnType(t2))) {
       Errors.incompatibleReturn(ctx);
        
@@ -474,21 +459,16 @@ void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
     }
   }
   else if(ctx->INTVAL() != NULL) {
-    //std::cout << "INTVAL" << std::endl;
     TypesMgr::TypeId t = Types.createIntegerTy();
-    //std::cout << t << " " << Types.to_string (t)<< std::endl;
     putTypeDecor(ctx, t);
     t = getTypeDecor(ctx);
-    //std::cout <<"after " << t << " " << Types.to_string (t)<< std::endl;    
   }
   else if(ctx->FLOATVAL() != NULL) {
-    //std::cout << "FLOATVAL" << std::endl;
     TypesMgr::TypeId t = Types.createFloatTy();
     putTypeDecor(ctx, t);
     
   }
   else if(ctx->CHARVAL() != NULL) {
-    //std::cout << "CHARVAL" << std::endl;
     TypesMgr::TypeId t = Types.createCharacterTy();
     putTypeDecor(ctx, t);
   }
@@ -500,17 +480,6 @@ void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
   DEBUG_EXIT();
 }
 
-// void TypeCheckListener::enterEveryRule(antlr4::ParserRuleContext *ctx) {
-//   DEBUG_ENTER();
-// }
-// void TypeCheckListener::exitEveryRule(antlr4::ParserRuleContext *ctx) {
-//   DEBUG_EXIT();
-// }
-// void TypeCheckListener::visitTerminal(antlr4::tree::TerminalNode *node) {
-//   DEBUG("visitTerminal");
-// }
-// void TypeCheckListener::visitErrorNode(antlr4::tree::ErrorNode *node) {
-// }
 
 
 // Getters for the necessary tree node atributes:
