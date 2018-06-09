@@ -295,10 +295,6 @@ void SymbolsListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext *
 void SymbolsListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if(Symbols.findInCurrentScope(ident) == -1) {
-      std::cout << "hola"<< std::endl;
-      Errors.undeclaredIdent(ctx->ID());
-  }
   putTypeDecor(ctx, t1);
   t1 = getTypeDecor(ctx);
   DEBUG_EXIT();  
@@ -310,10 +306,6 @@ void SymbolsListener::enterCallfunction(AslParser::CallfunctionContext *ctx) {
 void SymbolsListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if(Symbols.findInCurrentScope(ident) == -1) {
-      std::cout << "adios"<< std::endl;
-      Errors.undeclaredIdent(ctx->ID());
-  }
   putTypeDecor(ctx, t1);
   t1 = getTypeDecor(ctx);
   DEBUG_EXIT();
@@ -377,6 +369,20 @@ void SymbolsListener::exitAtom(AslParser::AtomContext *ctx){
     if(Symbols.findInStack(ident) <= -1) {
         Errors.undeclaredIdent(ctx->ID());
     }
+  }
+  DEBUG_EXIT();
+}
+
+void SymbolsListener::enterArrayvalue(AslParser::ArrayvalueContext *ctx){
+  DEBUG_ENTER();
+}
+
+void SymbolsListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
+  std::string ident = ctx->ID()->getText();
+  TypesMgr::TypeId t1 = Symbols.getType(ident);
+  
+  if(!Symbols.findInCurrentScope(ident)){
+      Errors.undeclaredIdent(ctx->ID());
   }
   DEBUG_EXIT();
 }

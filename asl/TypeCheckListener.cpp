@@ -122,16 +122,19 @@ void TypeCheckListener::exitAssignStmt(AslParser::AssignStmtContext *ctx)
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
   //std::cout << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
   if(Types.isFunctionTy(t2)) {
-    TypesMgr::TypeId t3 = Types.getFuncReturnType(t2);
-    if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t3)) and (not Types.copyableTypes(t1, t3))) {
+    if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t2)) and (not Types.equalTypes(t1, t2))) {
       Errors.incompatibleAssignment(ctx->ASSIGN());
     }
   } 
   else {
-    if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t2)) and (not Types.copyableTypes(t1, t2))) {
+    if (Types.isVoidTy(t2)){
+        Errors.isNotFunction(ctx->expr());
+    }
+    else if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t2)) and (not Types.copyableTypes(t1, t2))) {
       Errors.incompatibleAssignment(ctx->ASSIGN());
     }
   }
+  
   if ((not Types.isErrorTy(t1)) and (not getIsLValueDecor(ctx->left_expr())))
     Errors.nonReferenceableLeftExpr(ctx->left_expr());
   DEBUG_EXIT();
@@ -175,9 +178,13 @@ void TypeCheckListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext
 
 void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
     std::string ident = ctx->ID()->getText();
-    std::cout << ident << std::endl;
     TypesMgr::TypeId t1 = Symbols.getType(ident);
-    if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
+    
+    if(Symbols.findInStack(ident) == -1) {
+      Errors.undeclaredIdent(ctx->ID());
+    }
+  
+    else if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
         Errors.isNotCallable(ctx);
     }
     else if (!Types.isErrorTy(t1)){
@@ -336,11 +343,15 @@ void TypeCheckListener::enterCallfunction(AslParser::CallfunctionContext *ctx) {
 void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
+  
+  if(Symbols.findInStack(ident) == -1) {
+      Errors.undeclaredIdent(ctx->ID());
+  }
+
+  else if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
         Errors.isNotCallable(ctx);
   }
-  else 
-  {
+  else {
     int errors = 0;
     if ((Types.getNumOfParameters(t1) < ctx->expr().size()) or (Types.getNumOfParameters(t1) > ctx->expr().size())) Errors.numberOfParameters(ctx);
     else {
@@ -353,11 +364,10 @@ void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
                 if(!Types.equalTypes(getTypeDecor(ctx->expr(i)),Types.getParameterType(t1,i))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
             }
         }
+        putTypeDecor(ctx, Types.getFuncReturnType(t1));
+        t1 = getTypeDecor(ctx);
     }
-
   }
-  putTypeDecor(ctx, t1);
-  t1 = getTypeDecor(ctx);
   DEBUG_EXIT();
   
 }
@@ -429,16 +439,12 @@ void TypeCheckListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
   
-  /*if((!Symbols.findInCurrentScope(ident) or !Symbols.findInStack(ident)) and !Types.isFunctionTy(t1)) {
-      Errors.undeclaredIdent(ctx->ID());
-  }*/
   if(!Types.isArrayTy(t1) and not Types.isErrorTy(t1)) {
     Errors.nonArrayInArrayAccess(ctx);
   }
   TypesMgr::TypeId t = getTypeDecor(ctx->expr());
   if(!Types.isIntegerTy(t)) Errors.nonIntegerIndexInArrayAccess(ctx->expr());
-  else 
-  {
+  else {
     if(!Types.isErrorTy(t1) && Types.isArrayTy(t1)) putTypeDecor(ctx, Types.getArrayElemType(t1));
     else putTypeDecor(ctx, t1);
   }
@@ -466,9 +472,6 @@ void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
       putTypeDecor(ctx, t1);
       t1 = getTypeDecor(ctx);
     }
-    /*else {
-      Errors.undeclaredIdent(ctx->ID());
-    }*/
   }
   else if(ctx->INTVAL() != NULL) {
     //std::cout << "INTVAL" << std::endl;

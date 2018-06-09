@@ -119,6 +119,9 @@ public:
   
   void enterAtom(AslParser::AtomContext *ctx);
   void exitAtom(AslParser::AtomContext *ctx);
+  
+  void enterArrayvalue(AslParser::ArrayvalueContext *ctx);
+  void exitArrayvalue(AslParser::ArrayvalueContext *ctx);
 
   void enterValue(AslParser::ValueContext *ctx);
   void exitValue(AslParser::ValueContext *ctx);
