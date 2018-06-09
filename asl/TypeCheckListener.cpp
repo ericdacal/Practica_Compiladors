@@ -349,17 +349,17 @@ void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   else 
   {
     int errors = 0;
-    for(uint i = 0; i < Types.getNumOfParameters(t1); ++i) 
-    {
-      if(ctx->expr(i) == NULL) {
-          if (errors == 0) Errors.numberOfParameters(ctx);
-          ++errors;
-      }
-      else 
-      {
-        if(!Types.equalTypes(getTypeDecor(ctx->expr(i)),Types.getParameterType(t1,i))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
-      }
-
+    if ((Types.getNumOfParameters(t1) < ctx->expr().size()) or (Types.getNumOfParameters(t1) > ctx->expr().size())) Errors.numberOfParameters(ctx);
+    else {
+        for(uint i = 0; i < Types.getNumOfParameters(t1); ++i) {
+            if(ctx->expr(i) == NULL) {
+                if (errors == 0) Errors.numberOfParameters(ctx);
+                ++errors;
+            }
+            else {
+                if(!Types.equalTypes(getTypeDecor(ctx->expr(i)),Types.getParameterType(t1,i))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
+            }
+        }
     }
 
   }
