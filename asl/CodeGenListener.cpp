@@ -203,8 +203,12 @@ void CodeGenListener::exitWriteExpr(AslParser::WriteExprContext *ctx) {
   std::string     addr1 = getAddrDecor(ctx->expr());
   // std::string     offs1 = getOffsetDecor(ctx->expr());
   instructionList code1 = getCodeDecor(ctx->expr());
-  // TypesMgr::TypeId tid1 = getTypeDecor(ctx->expr());
-  code = code1 || instruction::WRITEI(addr1);
+  TypesMgr::TypeId tid1 = getTypeDecor(ctx->expr());
+  
+  if(Types.isFloatTy(tid1)){
+    code = code1 || instruction::WRITEF(addr1);
+  }
+  else code = code1 || instruction::WRITEI(addr1);
   putCodeDecor(ctx, code);
   DEBUG_EXIT();
 }
@@ -273,7 +277,14 @@ void CodeGenListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   // TypesMgr::TypeId t  = getTypeDecor(ctx);
   std::string temp = "%"+codeCounters.newTEMP();
   
-  if (Types.isFloatTy(t1) or Types.isFloatTy(t2)){
+  if (Types.isFloatTy(t1) and Types.isIntegerTy(t2)){
+    code = code || instruction::FLOAT(addr2,addr2);
+  }
+  else if (Types.isFloatTy(t2) and Types.isIntegerTy(t1)){
+    code = code || instruction::FLOAT(addr1,addr1);
+  }
+
+  if (Types.isFloatTy(t1) and Types.isFloatTy(t2)){
     if (ctx->MUL())
         code = code || instruction::FMUL(temp, addr1, addr2);
     else if (ctx->DIV())
@@ -318,6 +329,8 @@ void CodeGenListener::exitRelational(AslParser::RelationalContext *ctx) {
   std::string temp = "%"+codeCounters.newTEMP();
   
   if (Types.isFloatTy(t1) or Types.isFloatTy(t2)){
+    code = code || instruction::FLOAT(addr1,addr1);
+    code = code || instruction::FLOAT(addr2,addr2);
     if (ctx->EQUAL()){
         code = code || instruction::FEQ(temp, addr1, addr2);
     }
