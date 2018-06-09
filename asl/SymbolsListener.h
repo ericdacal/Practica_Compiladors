@@ -111,6 +111,9 @@ public:
   void enterRelational(AslParser::RelationalContext *ctx);
   void exitRelational(AslParser::RelationalContext *ctx);
 
+  void enterCallfunction(AslParser::CallfunctionContext *ctx);
+  void exitCallfunction(AslParser::CallfunctionContext *ctx);
+
   void enterValue(AslParser::ValueContext *ctx);
   void exitValue(AslParser::ValueContext *ctx);
   

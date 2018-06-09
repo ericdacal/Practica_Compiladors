@@ -120,7 +120,7 @@ void TypeCheckListener::exitAssignStmt(AslParser::AssignStmtContext *ctx)
 {
   TypesMgr::TypeId t1 = getTypeDecor(ctx->left_expr());
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
-  std::cout << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
+  //std::cout << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
   if(Types.isFunctionTy(t2)) {
     TypesMgr::TypeId t3 = Types.getFuncReturnType(t2);
     if(Types.isVoidTy(t3)) {
@@ -241,26 +241,26 @@ void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
   int error = 0;
-  if(ctx->expr() != NULL) 
+  if(ctx->expr() != NULL and not Types.isErrorTy(t1)) 
   {
-    if(!Types.isArrayTy(t1)) 
-    {
-      Errors.nonArrayInArrayAccess(ctx);
-      TypesMgr::TypeId t = Types.createErrorTy();
-      putTypeDecor(ctx, t);
-      ++error;
-    }
-    
-    TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
-    if(!Types.isIntegerTy(t2)) 
-    {
-        Errors.nonIntegerIndexInArrayAccess(ctx->expr());
+      if(!Types.isArrayTy(t1)) 
+      {
+        Errors.nonArrayInArrayAccess(ctx);
         TypesMgr::TypeId t = Types.createErrorTy();
         putTypeDecor(ctx, t);
         ++error;
-    }
-    
-    if (error == 0) putTypeDecor(ctx, t2);
+      }
+      
+      TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
+      if(!Types.isIntegerTy(t2)) 
+      {
+          Errors.nonIntegerIndexInArrayAccess(ctx->expr());
+          TypesMgr::TypeId t = Types.createErrorTy();
+          putTypeDecor(ctx, t);
+          ++error;
+      }
+      
+      if (error == 0) putTypeDecor(ctx, t2);
   }
   else putTypeDecor(ctx, t1);
   if(Types.isFunctionTy(t1)) putIsLValueDecor(ctx, false); 
@@ -273,7 +273,9 @@ void TypeCheckListener::enterArithmetic(AslParser::ArithmeticContext *ctx) {
 }
 void TypeCheckListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   TypesMgr::TypeId t1 = getTypeDecor(ctx->expr(0));
+  if(Types.isFunctionTy(t1)) t1 = Types.getFuncReturnType(t1); 
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
+  if(Types.isFunctionTy(t2)) t2 = Types.getFuncReturnType(t2); 
   //std::cout << t1 << " " << t2 << " Expr:" + ctx->expr(0)->getText() + " " + ctx->expr(1)->getText()  + " Tipos: " << Types.to_string (t1) << " " << Types.to_string (t2) << std::endl;
   if (((not Types.isErrorTy(t1)) and (not Types.isNumericTy(t1))) or
       ((not Types.isErrorTy(t2)) and (not Types.isNumericTy(t2))))
@@ -338,11 +340,22 @@ void TypeCheckListener::enterCallfunction(AslParser::CallfunctionContext *ctx) {
 void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if(Symbols.findInStack(ident) == -1) {
-      Errors.undeclaredIdent(ctx->ID());
-  }
   if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
         Errors.isNotCallable(ctx);
+  }
+  else 
+  {
+    for(uint i = 0; i < Types.getNumOfParameters(t1); ++i) 
+    {
+      if(ctx->expr(i) == NULL) Errors.numberOfParameters(ctx);
+      else 
+      {
+        //std::cout << "Tipo expr: " << Types.to_string(getTypeDecor(ctx->expr(i))) << " Tipo parameter: " << Types.to_string(Types.getParameterType(t1,i)) << std::endl;
+        if(!Types.equalTypes(getTypeDecor(ctx->expr(i)),Types.getParameterType(t1,i))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
+      }
+
+    }
+
   }
   putTypeDecor(ctx, t1);
   t1 = getTypeDecor(ctx);
@@ -412,12 +425,14 @@ void TypeCheckListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
       Errors.undeclaredIdent(ctx->ID());
   }
   TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if(!Types.isArrayTy(t1)) Errors.nonArrayInArrayAccess(ctx);
+  if(!Types.isArrayTy(t1) and not Types.isErrorTy(t1)) {
+    Errors.nonArrayInArrayAccess(ctx);
+  }
   TypesMgr::TypeId t = getTypeDecor(ctx->expr());
   if(!Types.isIntegerTy(t)) Errors.nonIntegerIndexInArrayAccess(ctx->expr());
   else 
   {
-    putTypeDecor(ctx, t1);
+    putTypeDecor(ctx, Types.getArrayElemType(t1));
     t1 = getTypeDecor(ctx);
   }
   DEBUG_EXIT();
