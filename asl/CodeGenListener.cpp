@@ -208,7 +208,7 @@ void CodeGenListener::exitWriteExpr(AslParser::WriteExprContext *ctx) {
   if(Types.isFloatTy(tid1)){
     code = code1 || instruction::WRITEF(addr1);
   }
-  else code = code1 || instruction::WRITEI(addr1);
+  else if (Types.isIntegerTy(tid1))code = code1 || instruction::WRITEI(addr1);
   putCodeDecor(ctx, code);
   DEBUG_EXIT();
 }
