@@ -260,7 +260,7 @@ void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
           putTypeDecor(ctx, t);
           ++error;
       }
-      std::cout << "Tipo: " << Types.to_string(t1) << std::endl;
+      //std::cout << "Tipo: " << Types.to_string(t1) << std::endl;
       if (error == 0 and Types.isArrayTy(t1)) putTypeDecor(ctx, Types.getArrayElemType(t1));
       else if(error == 0) putTypeDecor(ctx, t1);
   }
@@ -434,10 +434,11 @@ void TypeCheckListener::enterArrayvalue(AslParser::ArrayvalueContext *ctx) {
 
 void TypeCheckListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   std::string ident = ctx->ID()->getText();
-  if(!Symbols.findInCurrentScope(ident) and !Symbols.findInStack(ident)) {
+  TypesMgr::TypeId t1 = Symbols.getType(ident);
+  
+  if((!Symbols.findInCurrentScope(ident) or !Symbols.findInStack(ident)) and !Types.isFunctionTy(t1)) {
       Errors.undeclaredIdent(ctx->ID());
   }
-  TypesMgr::TypeId t1 = Symbols.getType(ident);
   if(!Types.isArrayTy(t1) and not Types.isErrorTy(t1)) {
     Errors.nonArrayInArrayAccess(ctx);
   }
