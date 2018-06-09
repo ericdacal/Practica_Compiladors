@@ -279,9 +279,11 @@ void CodeGenListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   
   if (Types.isFloatTy(t1) and Types.isIntegerTy(t2)){
     code = code || instruction::FLOAT(addr2,addr2);
+    t2=Types.createFloatTy();
   }
   else if (Types.isFloatTy(t2) and Types.isIntegerTy(t1)){
     code = code || instruction::FLOAT(addr1,addr1);
+    t1=Types.createFloatTy();
   }
 
   if (Types.isFloatTy(t1) and Types.isFloatTy(t2)){
@@ -326,11 +328,19 @@ void CodeGenListener::exitRelational(AslParser::RelationalContext *ctx) {
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
   // TypesMgr::TypeId t  = getTypeDecor(ctx);
   
+  if (Types.isFloatTy(t1) and Types.isIntegerTy(t2)){
+    code = code || instruction::FLOAT(addr2,addr2);
+    t2=Types.createFloatTy();
+  }
+  else if (Types.isFloatTy(t2) and Types.isIntegerTy(t1)){
+    code = code || instruction::FLOAT(addr1,addr1);
+    t1=Types.createFloatTy();
+  }
+  
   std::string temp = "%"+codeCounters.newTEMP();
   
-  if (Types.isFloatTy(t1) or Types.isFloatTy(t2)){
-    code = code || instruction::FLOAT(addr1,addr1);
-    code = code || instruction::FLOAT(addr2,addr2);
+  if (Types.isFloatTy(t1) and Types.isFloatTy(t2)){
+    
     if (ctx->EQUAL()){
         code = code || instruction::FEQ(temp, addr1, addr2);
     }
