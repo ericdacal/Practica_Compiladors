@@ -209,7 +209,8 @@ void SymbolsListener::enterType(AslParser::TypeContext *ctx) {
   DEBUG_ENTER();
 }
 void SymbolsListener::exitType(AslParser::TypeContext *ctx) {
-  if (ctx->ARRAY()) {
+  if (ctx->ARRAY()) 
+  {
     uint size = atoi((ctx->INTVAL()->getText()).c_str());
     TypesMgr::TypeId t = getTypeDecor(ctx->basic_type());
     TypesMgr::TypeId tf = Types.createArrayTy(size,t);

@@ -260,8 +260,9 @@ void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
           putTypeDecor(ctx, t);
           ++error;
       }
-      
-      if (error == 0) putTypeDecor(ctx, t2);
+      std::cout << "Tipo: " << Types.to_string(t1) << std::endl;
+      if (error == 0 and Types.isArrayTy(t1)) putTypeDecor(ctx, Types.getArrayElemType(t1));
+      else if(error == 0) putTypeDecor(ctx, t1);
   }
   else putTypeDecor(ctx, t1);
   if(Types.isFunctionTy(t1)) putIsLValueDecor(ctx, false); 
@@ -269,7 +270,8 @@ void TypeCheckListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
   DEBUG_EXIT();
 }
 
-void TypeCheckListener::enterArithmetic(AslParser::ArithmeticContext *ctx) {
+void TypeCheckListener::enterArithmetic(AslParser::ArithmeticContext *ctx) 
+{
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
@@ -439,7 +441,7 @@ void TypeCheckListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   if(!Types.isIntegerTy(t)) Errors.nonIntegerIndexInArrayAccess(ctx->expr());
   else 
   {
-    if(!Types.isErrorTy(t1)) putTypeDecor(ctx, Types.getArrayElemType(t1));
+    if(!Types.isErrorTy(t1) && Types.isArrayTy(t1)) putTypeDecor(ctx, Types.getArrayElemType(t1));
     else putTypeDecor(ctx, t1);
   }
   DEBUG_EXIT();
