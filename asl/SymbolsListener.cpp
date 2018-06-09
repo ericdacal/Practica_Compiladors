@@ -77,7 +77,8 @@ TypesMgr::TypeId SymbolsListener::ReturnType(AslParser::FunctionContext *ctx, bo
 {
   TypesMgr::TypeId t;
   if(!output) {
-    if(ctx->type(i)->basic_type() != NULL)
+    std::string stype = ctx->type(i)->getText();
+    if(stype.size() < 6)
     {
         if(ctx->type(i)->basic_type()->INT() != NULL) t = Types.createIntegerTy();
         else if(ctx->type(i)->basic_type()->BOOL() != NULL) t = Types.createBooleanTy();
