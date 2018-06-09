@@ -437,8 +437,8 @@ void TypeCheckListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   if(!Types.isIntegerTy(t)) Errors.nonIntegerIndexInArrayAccess(ctx->expr());
   else 
   {
-    putTypeDecor(ctx, Types.getArrayElemType(t1));
-    t1 = getTypeDecor(ctx);
+    if(!Types.isErrorTy(t1)) putTypeDecor(ctx, Types.getArrayElemType(t1));
+    else putTypeDecor(ctx, t1);
   }
   DEBUG_EXIT();
 }
