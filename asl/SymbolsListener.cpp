@@ -295,7 +295,8 @@ void SymbolsListener::enterCallfunction(AslParser::CallfunctionContext *ctx) {
 void SymbolsListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
-  if(Symbols.findInStack(ident) == -1) {
+  if(Symbols.findInCurrentScope(ident) == -1) {
+      std::cout << ident << std::endl;
       Errors.undeclaredIdent(ctx->ID());
   }
   putTypeDecor(ctx, t1);
