@@ -289,6 +289,21 @@ void SymbolsListener::exitProcCall(AslParser::ProcCallContext *ctx) {
   DEBUG_EXIT();
 }*/
 
+void SymbolsListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
+  DEBUG_ENTER();
+}
+void SymbolsListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
+  std::string ident = ctx->ID()->getText();
+  TypesMgr::TypeId t1 = Symbols.getType(ident);
+  if(Symbols.findInCurrentScope(ident) == -1) {
+      std::cout << "hola"<< std::endl;
+      Errors.undeclaredIdent(ctx->ID());
+  }
+  putTypeDecor(ctx, t1);
+  t1 = getTypeDecor(ctx);
+  DEBUG_EXIT();  
+}
+
 void SymbolsListener::enterCallfunction(AslParser::CallfunctionContext *ctx) {
   DEBUG_ENTER();
 }
@@ -296,7 +311,7 @@ void SymbolsListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
   if(Symbols.findInCurrentScope(ident) == -1) {
-      std::cout << ident << std::endl;
+      std::cout << "adios"<< std::endl;
       Errors.undeclaredIdent(ctx->ID());
   }
   putTypeDecor(ctx, t1);
@@ -304,6 +319,8 @@ void SymbolsListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   DEBUG_EXIT();
   
 }
+
+
 
 void SymbolsListener::enterReadStmt(AslParser::ReadStmtContext *ctx) {
   DEBUG_ENTER();

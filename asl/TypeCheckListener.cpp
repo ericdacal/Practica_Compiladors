@@ -175,17 +175,13 @@ void TypeCheckListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext
 
 void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
     std::string ident = ctx->ID()->getText();
+    std::cout << ident << std::endl;
     TypesMgr::TypeId t1 = Symbols.getType(ident);
     if (not Types.isFunctionTy(t1) and not Types.isErrorTy(t1)) {
         Errors.isNotCallable(ctx);
     }
-    /*else if(Types.isErrorTy(t1)) 
-    {
-      Errors.undeclaredIdent(ctx->ID());
-    }*/
-    else {
-      if(Types.getNumOfParameters(t1) != ctx->expr().size()) 
-      {
+    else if (!Types.isErrorTy(t1)){
+      if(Types.getNumOfParameters(t1) != ctx->expr().size()){
           Errors.numberOfParameters(ctx);
       }
       for(uint i = 0; i < Types.getNumOfParameters(t1); ++i) {

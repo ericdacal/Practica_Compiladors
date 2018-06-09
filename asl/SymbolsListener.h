@@ -114,6 +114,9 @@ public:
   void enterCallfunction(AslParser::CallfunctionContext *ctx);
   void exitCallfunction(AslParser::CallfunctionContext *ctx);
   
+  void enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
+  void exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
+  
   void enterAtom(AslParser::AtomContext *ctx);
   void exitAtom(AslParser::AtomContext *ctx);
 
