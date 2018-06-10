@@ -68,9 +68,7 @@ void CodeGenListener::exitProgram(AslParser::ProgramContext *ctx) {
 
 void CodeGenListener::enterFunction(AslParser::FunctionContext *ctx) {
   DEBUG_ENTER();
-  subroutine subr(ctx->ID(0)->getText());
-  Code.add_subroutine(subr);
-  subroutine & subrRef = Code.get_last_subroutine();
+  subroutine subrRef(ctx->ID(0)->getText());
   std::string name = ctx->ID(0)->getText();
   if (ctx->returnSt() != NULL) {
     subrRef.add_param("_result");
@@ -80,6 +78,7 @@ void CodeGenListener::enterFunction(AslParser::FunctionContext *ctx) {
       std::string name = ctx->ID(i)->getText();
       subrRef.add_param(name);
   }
+  Code.add_subroutine(subrRef);
   SymTable::ScopeId sc = getScopeDecor(ctx);
   Symbols.pushThisScope(sc);
   codeCounters.reset();
@@ -735,24 +734,59 @@ void CodeGenListener::exitValue(AslParser::ValueContext *ctx) {
 void CodeGenListener::enterArrayvalue(AslParser::ArrayvalueContext *ctx) {
   DEBUG_ENTER();
 }
+
+
+/*std::string addr = getAddrDecor(ctx->expr());
+  instructionList code = getCodeDecor(ctx->expr());
+
+  std::string size = "%"+codeCounters.newTEMP();
+  std::string offset = "%"+codeCounters.newTEMP();
+  std::string temp = "%"+codeCounters.newTEMP();
+
+  int s = Types.getSizeOfType(Types.getArrayElemType(getTypeDecor(ctx->ident())));
+  code = code || instruction::ILOAD(size, std::to_string(s)); //REVISE!
+  code = code || instruction::MUL(offset, size, addr); //Fix me
+  if (Symbols.isParameterClass(ctx->ident()->ID()->getText())) {
+    std::string temp2 = "%"+codeCounters.newTEMP();
+    code = code || instruction::LOAD(temp2, ctx->ident()->ID()->getText()) 
+                || instruction::LOADX(temp,   temp2, offset);
+  }
+  else {
+    code = code || instruction::LOADX(temp, ctx->ident()->ID()->getText(), offset);
+  }
+  putCodeDecor(ctx,code);
+  putAddrDecor(ctx,temp);
+  DEBUG_EXIT();*/
+  
+  
+  
+  
 void CodeGenListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
 
   std::string addr = getAddrDecor(ctx->expr());
   instructionList code = getCodeDecor(ctx->expr());
   
   std::string nameVector = ctx->ID()->getText();
+  
   std::string offset = "%"+codeCounters.newTEMP();
   std::string i = "%"+codeCounters.newTEMP();
   std::string temp = "%"+codeCounters.newTEMP();
+  
   TypesMgr::TypeId t = Symbols.getType(nameVector);
   TypesMgr::TypeId tVector = Types.getArrayElemType(t);
   int size = Types.getSizeOfType(tVector);
 
-  code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr) || instruction::LOADX(temp, nameVector,offset);
-  
+  code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr);
+  if (Symbols.isParameterClass(nameVector)) {
+    std::string temp2 = "%"+codeCounters.newTEMP();
+    code = code || instruction::LOAD(temp2, nameVector) 
+                || instruction::LOADX(temp, temp2, offset);
+  }
+  else{
+    code = code || instruction::LOADX(temp, nameVector, offset);
+  }
   putAddrDecor(ctx, temp);
   putCodeDecor(ctx, code);
-  putOffsetDecor(ctx, "");
   DEBUG_EXIT();
 }
 

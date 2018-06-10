@@ -1,6 +1,6 @@
 func f(a:array[10] of float)
-  write a[5];write "\n";
   a[5] = a[5]*10;
+  write "hola"; write a[5]; write "\n";
 endfunc
 
 func main()
