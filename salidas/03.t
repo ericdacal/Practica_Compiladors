@@ -1,6 +1,3 @@
-stms
-hola
-stms
 function mul
   params
     _result
@@ -8,6 +5,7 @@ function mul
     b
   endparams
 
+   _result = a*b
    return
 endfunction
 
@@ -31,6 +29,13 @@ function main
    writec %1
    %1 = '='
    writec %1
+   pushparam 
+   pushparam x
+   pushparam y
+   call mul
+   popparam x
+   popparam y
+   popparam %4
    %5 = 2
    %6 = %4 * %5
    writei %6
