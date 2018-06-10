@@ -250,12 +250,8 @@ void CodeGenListener::exitAssignStmt(AslParser::AssignStmtContext *ctx) {
   std::string temp = "%"+codeCounters.newTEMP();
   code = code1 || code2;
   
-  //std::cout << Types.to_string(tid1) << " " << Types.to_string(tid2) << std::endl;
   if (offs1 != ""){
     code = code || instruction::XLOAD(addr1,offs1,addr2);
-  }
-  else if (offs2 != ""){
-    code = code || instruction::LOADX(addr1, addr2,offs2);
   }
   else{
     code = code || instruction::LOAD(addr1, addr2);
@@ -325,13 +321,12 @@ void CodeGenListener::enterWriteExpr(AslParser::WriteExprContext *ctx) {
 void CodeGenListener::exitWriteExpr(AslParser::WriteExprContext *ctx) {
   instructionList code;
   std::string     addr1 = getAddrDecor(ctx->expr());
-  //std::string     offs1 = getOffsetDecor(ctx->expr());
+  std::string     offs1 = getOffsetDecor(ctx->expr());
   instructionList code1 = getCodeDecor(ctx->expr());
   TypesMgr::TypeId tid1 = getTypeDecor(ctx->expr());
   TypesMgr::TypeId t = getTypeDecor(ctx);
   
-  //std::cout << Types.to_string(tid1) << std::endl;
-  
+
   if(Types.isFloatTy(tid1)){
     code = code1 || instruction::WRITEF(addr1);
   }
@@ -389,6 +384,8 @@ void CodeGenListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
     putCodeDecor(ctx, instructionList());
   }
   else {
+    //std::cout << "left expr" << std::endl;
+    
     std::string addr = getAddrDecor(ctx->expr());
     instructionList code = getCodeDecor(ctx->expr());
     
@@ -401,7 +398,7 @@ void CodeGenListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
     TypesMgr::TypeId tVector = Types.getArrayElemType(t);
     int size = Types.getSizeOfType(tVector);
   
-    code = code || instruction::ILOAD(i,addr) || instruction::MUL(offset,std::to_string(size),i);
+    code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr);
     
     putAddrDecor(ctx, nameVector);
     putCodeDecor(ctx, code);
@@ -665,13 +662,12 @@ void CodeGenListener::exitArrayvalue(AslParser::ArrayvalueContext *ctx) {
   TypesMgr::TypeId tVector = Types.getArrayElemType(t);
   int size = Types.getSizeOfType(tVector);
 
-  code = code || instruction::ILOAD(i,addr) || instruction::MUL(offset,std::to_string(size),i);
+  code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr) || instruction::LOADX(temp, addr,offset);
   
-  putAddrDecor(ctx, nameVector);
+  putAddrDecor(ctx, temp);
   putCodeDecor(ctx, code);
-  putOffsetDecor(ctx, offset);
+  putOffsetDecor(ctx, "");
   DEBUG_EXIT();
-  
 }
 
 
