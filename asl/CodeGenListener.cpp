@@ -142,7 +142,7 @@ void CodeGenListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *c
   
   for(uint i = 0; i < ctx->expr().size(); ++i){
       std::string param = getAddrDecor(ctx->expr(i));
-      code = code || instruction::POP(param);
+      code = code || instruction::POP("");
   }
   if (!Types.isVoidTy(tRet)) {
     code = code || instruction::POP(temp);
@@ -181,7 +181,7 @@ void CodeGenListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   
   for(uint i = 0; i < ctx->expr().size(); ++i){
       std::string param = getAddrDecor(ctx->expr(i));
-      code = code || instruction::POP(param);
+      code = code || instruction::POP("");
   }
   if (!Types.isVoidTy(tRet)) {
     code = code || instruction::POP(temp);

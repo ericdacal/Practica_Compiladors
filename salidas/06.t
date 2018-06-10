@@ -81,8 +81,8 @@ function fz
      %15 = float %15
      pushparam %15
      call f
-     popparam %12
-     popparam %15
+     popparam 
+     popparam 
      popparam %16
   label endif1 :
      %18 = 3
@@ -114,13 +114,13 @@ function main
    %9 = q +. %10
    pushparam %9
    call fz
-   popparam %6
-   popparam %9
+   popparam 
+   popparam 
    popparam %11
    pushparam %11
    call fz
-   popparam %5
-   popparam %11
+   popparam 
+   popparam 
    popparam %12
    q = %12
    %15 = 3.7
