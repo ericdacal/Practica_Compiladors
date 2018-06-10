@@ -138,7 +138,6 @@ instructionList code;
             code = code || instruction::ALOAD(f_addr, param);
             param = f_addr;
       }
-      
       instructionList codeArimetic = getCodeDecor(ctx->expr(i));
       TypesMgr::TypeId tparam = Types.getParameterType(t,i);
       code = code || codeArimetic;
@@ -321,11 +320,23 @@ void CodeGenListener::exitIfStmt(AslParser::IfStmtContext *ctx) {
   std::string      addr1 = getAddrDecor(ctx->expr());
   instructionList  code1 = getCodeDecor(ctx->expr());
   instructionList  code2 = getCodeDecor(ctx->statements(0));
-  std::string      label = codeCounters.newLabelIF();
-  std::string labelEndIf = "endif"+label;
-  code = code1 || instruction::FJUMP(addr1, labelEndIf) ||
-         code2 || instruction::LABEL(labelEndIf);
-  putCodeDecor(ctx, code);
+
+  if (ctx->statements(1) != NULL) {
+    std::string label = codeCounters.newLabelIF();
+    std::string labelElse = "else" + codeCounters.newTEMP();
+    std::string labelEndIf = "endif"+label;
+    instructionList  codeElse = getCodeDecor(ctx->statements(1));
+    
+    code = code1 || instruction::FJUMP(addr1, labelElse) || code2 ||instruction::UJUMP(labelEndIf) || instruction::LABEL(labelElse) || codeElse || instruction::LABEL(labelEndIf);
+    putCodeDecor(ctx, code);
+  }
+  else {
+    std::string label = codeCounters.newLabelIF();
+    std::string labelEndIf = "endif"+label;
+    code = code1 || instruction::FJUMP(addr1, labelEndIf) ||
+          code2 || instruction::LABEL(labelEndIf);
+    putCodeDecor(ctx, code);
+  }
   DEBUG_EXIT();
 }
 
