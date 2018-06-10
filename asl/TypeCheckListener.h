@@ -106,6 +106,9 @@ public:
 
   void enterArithmetic(AslParser::ArithmeticContext *ctx);
   void exitArithmetic(AslParser::ArithmeticContext *ctx);
+  
+  void enterFloatExpr(AslParser::FloatExprContext *ctx);
+  void exitFloatExpr(AslParser::FloatExprContext *ctx);
 
   void enterRelational(AslParser::RelationalContext *ctx);
   void exitRelational(AslParser::RelationalContext *ctx);

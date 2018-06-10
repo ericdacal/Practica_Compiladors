@@ -264,16 +264,46 @@ void TypeCheckListener::enterArithmetic(AslParser::ArithmeticContext *ctx)
 }
 void TypeCheckListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   TypesMgr::TypeId t1 = getTypeDecor(ctx->expr(0));
-  if(Types.isFunctionTy(t1)) t1 = Types.getFuncReturnType(t1); 
+  //if(Types.isFunctionTy(t1)) t1 = Types.getFuncReturnType(t1); 
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
-  if(Types.isFunctionTy(t2)) t2 = Types.getFuncReturnType(t2); 
+  //if(Types.isFunctionTy(t2)) t2 = Types.getFuncReturnType(t2); 
 
+  /*std::string oper = ctx->op->getText();
+  std::cout <<"Typecheck "<< Types.to_string(t1) << " " << Types.to_string(t2) << " " << oper << std::endl;*/
+  
   if (((not Types.isErrorTy(t1)) and (not Types.isNumericTy(t1))) or
       ((not Types.isErrorTy(t2)) and (not Types.isNumericTy(t2))))
     Errors.incompatibleOperator(ctx->op);
-  TypesMgr::TypeId t = Types.createIntegerTy();
-  putTypeDecor(ctx, t);
-  putIsLValueDecor(ctx, false);
+    
+  if (Types.isFloatTy(t1) or Types.isFloatTy(t2)){
+    TypesMgr::TypeId t = Types.createFloatTy();
+    putTypeDecor(ctx, t);
+    putIsLValueDecor(ctx, false);
+  }
+ 
+  else{
+    TypesMgr::TypeId t = Types.createIntegerTy();
+    putTypeDecor(ctx, t);
+    putIsLValueDecor(ctx, false);
+  }
+  DEBUG_EXIT();
+}
+
+void TypeCheckListener::enterFloatExpr(AslParser::FloatExprContext *ctx){
+  DEBUG_ENTER();
+}
+void TypeCheckListener::exitFloatExpr(AslParser::FloatExprContext *ctx){
+  TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
+  if(Types.isFunctionTy(t1)) t1 = Types.getFuncReturnType(t1); 
+  
+  if (((not Types.isErrorTy(t1)) and (not Types.isNumericTy(t1))))
+    Errors.incompatibleOperator(ctx->op);
+    
+  if(Types.isIntegerTy(t1)){
+    TypesMgr::TypeId t = Types.createFloatTy();
+    putTypeDecor(ctx, t);
+    putIsLValueDecor(ctx, false);
+  }
   DEBUG_EXIT();
 }
 

@@ -70,6 +70,9 @@ public:
   virtual void enterLeft_expr(AslParser::Left_exprContext * /*ctx*/) override { }
   virtual void exitLeft_expr(AslParser::Left_exprContext * /*ctx*/) override { }
 
+  virtual void enterFloatExpr(AslParser::FloatExprContext * /*ctx*/) override { }
+  virtual void exitFloatExpr(AslParser::FloatExprContext * /*ctx*/) override { }
+
   virtual void enterCallfunction(AslParser::CallfunctionContext * /*ctx*/) override { }
   virtual void exitCallfunction(AslParser::CallfunctionContext * /*ctx*/) override { }
 

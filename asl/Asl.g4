@@ -108,6 +108,7 @@ left_expr
 // Grammar for expressions with boolean, relational and aritmetic operators
 expr     
         : '(' expr ')'                               # parenthesis   
+        | op=FLOAT expr                              # floatExpr
         | expr op=(MUL|DIV) expr                     # arithmetic
         | expr op=(PLUS|SUB) expr                    # arithmetic
         | expr op=(EQUAL|DIFF|LT|GT|LTE|GTE) expr    # relational

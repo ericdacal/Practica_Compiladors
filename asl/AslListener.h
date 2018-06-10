@@ -68,6 +68,9 @@ public:
   virtual void enterLeft_expr(AslParser::Left_exprContext *ctx) = 0;
   virtual void exitLeft_expr(AslParser::Left_exprContext *ctx) = 0;
 
+  virtual void enterFloatExpr(AslParser::FloatExprContext *ctx) = 0;
+  virtual void exitFloatExpr(AslParser::FloatExprContext *ctx) = 0;
+
   virtual void enterCallfunction(AslParser::CallfunctionContext *ctx) = 0;
   virtual void exitCallfunction(AslParser::CallfunctionContext *ctx) = 0;
 

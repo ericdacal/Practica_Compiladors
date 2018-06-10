@@ -94,6 +94,9 @@ public:
 
   void enterReadStmt(AslParser::ReadStmtContext *ctx);
   void exitReadStmt(AslParser::ReadStmtContext *ctx);
+  
+  void enterWhile(AslParser::WhileContext *ctx);
+  void exitWhile(AslParser::WhileContext *ctx);
 
   void enterWriteExpr(AslParser::WriteExprContext *ctx);
   void exitWriteExpr(AslParser::WriteExprContext *ctx);

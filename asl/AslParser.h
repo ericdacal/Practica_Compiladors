@@ -325,6 +325,17 @@ public:
    
   };
 
+  class  FloatExprContext : public ExprContext {
+  public:
+    FloatExprContext(ExprContext *ctx);
+
+    antlr4::Token *op = nullptr;
+    ExprContext *expr();
+    antlr4::tree::TerminalNode *FLOAT();
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+  };
+
   class  CallfunctionContext : public ExprContext {
   public:
     CallfunctionContext(ExprContext *ctx);
