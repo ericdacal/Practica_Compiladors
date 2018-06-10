@@ -344,11 +344,37 @@ void CodeGenListener::enterReadStmt(AslParser::ReadStmtContext *ctx) {
 void CodeGenListener::exitReadStmt(AslParser::ReadStmtContext *ctx) {
   instructionList  code;
   std::string     addr1 = getAddrDecor(ctx->left_expr());
-  // std::string     offs1 = getOffsetDecor(ctx->left_expr());
+  std::string     offs1 = getOffsetDecor(ctx->left_expr());
   instructionList code1 = getCodeDecor(ctx->left_expr());
-  // TypesMgr::TypeId tid1 = getTypeDecor(ctx->left_expr());
-  code = code1 || instruction::READI(addr1);
+  TypesMgr::TypeId tid1 = getTypeDecor(ctx->left_expr());
+  
+  if (offs1 != ""){
+    std::string temp = "%"+codeCounters.newTEMP();
+    if(Types.isFloatTy(tid1)){
+      code = code1 || instruction::READF(temp);
+    }
+    else if (Types.isCharacterTy(tid1)){
+      code = code1 || instruction::READC(temp);
+    }
+    else{
+      code = code1 || instruction::READI(temp);
+    }
+    code = code || instruction::XLOAD(addr1,offs1,temp);
+  }
+  
+  else if(Types.isFloatTy(tid1)){
+    code = code1 || instruction::READF(addr1);
+  }
+  else if (Types.isCharacterTy(tid1)){
+    code = code1 || instruction::READC(addr1);
+  }
+  else{
+    code = code1 || instruction::READI(addr1);
+  }
+  putAddrDecor(ctx, addr1);
   putCodeDecor(ctx, code);
+  putOffsetDecor(ctx, "");
+  
   DEBUG_EXIT();
 }
 
@@ -421,7 +447,6 @@ void CodeGenListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
     putCodeDecor(ctx, instructionList());
   }
   else {
-    //std::cout << "left expr" << std::endl;
     
     std::string addr = getAddrDecor(ctx->expr());
     instructionList code = getCodeDecor(ctx->expr());
