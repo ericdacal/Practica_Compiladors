@@ -183,7 +183,7 @@ void TypeCheckListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext 
       for(uint i = 0; i < Types.getNumOfParameters(t1); ++i) {
           TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(i));
           std::string name = ctx->expr(i)->getText();
-          if(not Types.equalTypes(Types.getParameterType(t1,i), t2)) {
+          if(not Types.copyableTypes(Types.getParameterType(t1,i), t2)) {
               Errors.incompatibleParameter(ctx->expr(i), i+1, ctx);
           }
           if(not getIsLValueDecor(ctx->expr(i)) and not Symbols.findInCurrentScope(name) and not Symbols.findInStack(name)) {
@@ -412,7 +412,6 @@ void TypeCheckListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
   if(ctx->expr() != NULL) {
     TypesMgr::TypeId t1 = getTypeDecor(ctx->expr());
     TypesMgr::TypeId t2 = Symbols.getCurrentFunctionTy();
-    
     if(not Types.equalTypes(t1, Types.getFuncReturnType(t2))) {
       Errors.incompatibleReturn(ctx);
     }

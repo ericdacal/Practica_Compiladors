@@ -264,7 +264,6 @@ void SymbolsListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *c
   std::string ident = ctx->ID()->getText();
   TypesMgr::TypeId t1 = Symbols.getType(ident);
   putTypeDecor(ctx, t1);
-  t1 = getTypeDecor(ctx);
   DEBUG_EXIT();  
 }
 
