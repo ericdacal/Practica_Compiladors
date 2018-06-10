@@ -128,6 +128,9 @@ public:
   void enterValue(AslParser::ValueContext *ctx);
   void exitValue(AslParser::ValueContext *ctx);
   
+  void enterArrayvalue(AslParser::ArrayvalueContext *ctx);
+  void exitArrayvalue(AslParser::ArrayvalueContext *ctx);
+  
   void enterAtomrule(AslParser::AtomruleContext *ctx);
   void exitAtomrule(AslParser::AtomruleContext *ctx);
 

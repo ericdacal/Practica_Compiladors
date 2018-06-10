@@ -389,7 +389,7 @@ void TypeCheckListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
                 ++errors;
             }
             else {
-                if(!Types.equalTypes(getTypeDecor(ctx->expr(i)),Types.getParameterType(t1,i))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
+                if(!Types.copyableTypes(Types.getParameterType(t1,i),getTypeDecor(ctx->expr(i)))) Errors.incompatibleParameter(ctx->expr(i),i + 1,ctx);
             }
         }
        
