@@ -91,6 +91,12 @@ public:
   
   void enterCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
   void exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx);
+  
+  void enterReturnSt(AslParser::ReturnStContext *ctx);
+  void exitReturnSt(AslParser::ReturnStContext *ctx);
+  
+  void enterCallfunction(AslParser::CallfunctionContext *ctx);
+  void exitCallfunction(AslParser::CallfunctionContext *ctx);
 
   void enterReadStmt(AslParser::ReadStmtContext *ctx);
   void exitReadStmt(AslParser::ReadStmtContext *ctx);

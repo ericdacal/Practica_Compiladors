@@ -120,6 +120,7 @@ void TypeCheckListener::exitAssignStmt(AslParser::AssignStmtContext *ctx)
 {
   TypesMgr::TypeId t1 = getTypeDecor(ctx->left_expr());
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr());
+  //std::cout << Types.to_string(t1) << " " << Types.to_string(t2) << std::endl;
   if(Types.isFunctionTy(t2)) {
     if ((not Types.isErrorTy(t1)) and (not Types.isErrorTy(t2)) and (not Types.equalTypes(t1, t2))) {
       Errors.incompatibleAssignment(ctx->ASSIGN());
