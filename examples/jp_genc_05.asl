@@ -3,7 +3,6 @@ func f(a:int, b:float): bool
   var y:bool
   var z:array[10] of int
   z[9] = (a + 67);
-  write z[9]; write "\n";
   x = 34;
   z[3] = 56 + z[9];
   if z[3] > x then

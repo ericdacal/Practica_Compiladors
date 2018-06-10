@@ -92,7 +92,8 @@ void CodeGenListener::exitFunction(AslParser::FunctionContext *ctx) {
     instructionList codeReturn = getCodeDecor(ctx->returnSt());
     TypesMgr:: TypeId tRet = getTypeDecor(ctx->returnSt());
     std::string  addrRet = getAddrDecor(ctx->returnSt());
-    
+    code = code || codeReturn;
+    //std::cout << Types.to_string(tRet) << std::endl;
     if (Types.isIntegerTy(tRet)){
       code = code || instruction::ILOAD("_result",addrRet);
     }
@@ -105,7 +106,6 @@ void CodeGenListener::exitFunction(AslParser::FunctionContext *ctx) {
     else if (Types.isCharacterTy(tRet)){
       code = code || instruction::CHLOAD("_result",addrRet);
     }
-    code = code || codeReturn;
   }
   code = code || instruction::RETURN();
   subrRef.set_instructions(code);
@@ -118,25 +118,35 @@ void CodeGenListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext *
 }
 
 void CodeGenListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
-  instructionList code;
+instructionList code;
   //std::string name = ctx->ident()->ID()->getSymbol()->getText();
   std::string temp = "%"+codeCounters.newTEMP();
   std::string name = ctx->ID()->getText();
   TypesMgr::TypeId t = Symbols.getType(name);
   TypesMgr:: TypeId tRet = Types.getFuncReturnType(t);
+  
   if (!Types.isVoidTy(tRet)) {
     code = code || instruction::PUSH("");
   }
+  
   for(uint i = 0; i < ctx->expr().size(); ++i){
       std::string param = getAddrDecor(ctx->expr(i));
+      TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
+      std::string f_addr = "%" + codeCounters.newTEMP();
+      
+      if (Types.isArrayTy(texpr)) {
+            code = code || instruction::ALOAD(f_addr, param);
+            param = f_addr;
+      }
+      
       instructionList codeArimetic = getCodeDecor(ctx->expr(i));
       TypesMgr::TypeId tparam = Types.getParameterType(t,i);
-      TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
       code = code || codeArimetic;
+      
       if(Types.isFloatTy(tparam) and Types.isIntegerTy(texpr)) {
         code = code || instruction::FLOAT(param,param);
       }
-      code = code ||  instruction::PUSH(param);
+      code = code || instruction::PUSH(param);
   }
   code = code || instruction::CALL(name);
   
@@ -163,15 +173,25 @@ void CodeGenListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   std::string name = ctx->ID()->getText();
   TypesMgr::TypeId t = Symbols.getType(name);
   TypesMgr:: TypeId tRet = Types.getFuncReturnType(t);
+  
   if (!Types.isVoidTy(tRet)) {
     code = code || instruction::PUSH("");
   }
-   for(uint i = 0; i < ctx->expr().size(); ++i){
+  
+  for(uint i = 0; i < ctx->expr().size(); ++i){
       std::string param = getAddrDecor(ctx->expr(i));
+      TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
+      std::string f_addr = "%" + codeCounters.newTEMP();
+      
+      if (Types.isArrayTy(texpr)) {
+            code = code || instruction::ALOAD(f_addr, param);
+            param = f_addr;
+      }
+      
       instructionList codeArimetic = getCodeDecor(ctx->expr(i));
       TypesMgr::TypeId tparam = Types.getParameterType(t,i);
-      TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
       code = code || codeArimetic;
+      
       if(Types.isFloatTy(tparam) and Types.isIntegerTy(texpr)) {
         code = code || instruction::FLOAT(param,param);
       }
@@ -212,13 +232,7 @@ void CodeGenListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
       code = code || instruction::CHLOAD(temp,name);
     }
     else if (Types.isBooleanTy(tRet)) {
-      if(name == "true") {
-        code = code || instruction::ILOAD(temp,"1");
-      }
-      else {
-        code = code || instruction::ILOAD(temp,"0");
-      }
-
+        code = code || instruction::ILOAD(temp,name);
     }
     putCodeDecor(ctx,code);
     putAddrDecor(ctx,temp);

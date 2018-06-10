@@ -44,7 +44,8 @@ function f
      writeln
   label endif1 :
      %19 = 1
-     %20 = 0
+     %20 = %19
+     _result = %20
      return
 endfunction
 
@@ -90,6 +91,7 @@ function fz
      %22 = float %19
      %21 = %22 *. u
      %23 = %21
+     _result = %23
      return
 endfunction
 

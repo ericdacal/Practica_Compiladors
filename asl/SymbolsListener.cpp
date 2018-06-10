@@ -148,11 +148,13 @@ void SymbolsListener::enterFunction(AslParser::FunctionContext *ctx) {
         TypesMgr::TypeId t =  ReturnType(ctx, true,0); 
         TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, t); 
         Symbols.addFunction(ident, tFunc);
+        putTypeDecor(ctx,tFunc);
     }
     else {
       TypesMgr::TypeId tRet = Types.createVoidTy();
       TypesMgr::TypeId tFunc = Types.createFunctionTy(lParamsTy, tRet); 
       Symbols.addFunction(ident, tFunc);
+      putTypeDecor(ctx,tFunc);
     }
     
     SymTable::ScopeId sc = Symbols.pushNewScope(ident);

@@ -78,7 +78,6 @@ void TypeCheckListener::enterFunction(AslParser::FunctionContext *ctx) {
   // Symbols.print();
 }
 void TypeCheckListener::exitFunction(AslParser::FunctionContext *ctx) {
-  
   Symbols.popScope();
   DEBUG_EXIT();
 }
@@ -415,6 +414,7 @@ void TypeCheckListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
     if(not Types.equalTypes(t1, Types.getFuncReturnType(t2))) {
       Errors.incompatibleReturn(ctx);
     }
+    putTypeDecor(ctx,t1);
   }
   else 
   {
@@ -425,6 +425,7 @@ void TypeCheckListener::exitReturnSt(AslParser::ReturnStContext *ctx) {
       Errors.incompatibleReturn(ctx);
        
     }
+    putTypeDecor(ctx,t1);
     
   }
   DEBUG_EXIT();

@@ -5,7 +5,9 @@ function mul
     b
   endparams
 
-   _result = a*b
+   %3 = a * b
+   %4 = %3
+   _result = %4
    return
 endfunction
 
@@ -33,8 +35,8 @@ function main
    pushparam x
    pushparam y
    call mul
-   popparam x
-   popparam y
+   popparam 
+   popparam 
    popparam %4
    %5 = 2
    %6 = %4 * %5

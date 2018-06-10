@@ -8,57 +8,57 @@ function main
 
      readi n
      aux = n
-     %3 = 0
-     %4 = n < %3
-     ifFalse %4 goto endif1
-     %5 = 'n'
-     writec %5
-     %5 = ' '
-     writec %5
-     %5 = '>'
-     writec %5
-     %5 = '='
-     writec %5
-     %5 = ' '
-     writec %5
-     %5 = '0'
-     writec %5
-     %5 = '!'
-     writec %5
+     %4 = 0
+     %5 = n < %4
+     ifFalse %5 goto endif1
+     %6 = 'n'
+     writec %6
+     %6 = ' '
+     writec %6
+     %6 = '>'
+     writec %6
+     %6 = '='
+     writec %6
+     %6 = ' '
+     writec %6
+     %6 = '0'
+     writec %6
+     %6 = '!'
+     writec %6
      writeln
-     %6 = 1
-     end = %6
-  label endif1 :
      %7 = 1
-     f = %7
-     %9 = not end
-     %11 = 1
-     %12 = n <= %11
-     %12 = not %12
-     %13 = %9 and %12
-     ifFalse %13 goto endwhile1
-  label loop20 :
-     %16 = f * n
-     f = %16
-     %18 = 1
-     %19 = n - %18
-     n = %19
-     %9 = not end
-     %11 = 1
-     %12 = n <= %11
-     %12 = not %12
-     %13 = %9 and %12
-     ifFalse %13 goto endwhile1
-     goto loop20
+     end = %7
+  label endif1 :
+     %9 = 1
+     f = %9
+     %12 = not end
+     %14 = 1
+     %15 = n <= %14
+     %15 = not %15
+     %16 = %12 and %15
+     ifFalse %16 goto endwhile1
+  label loop25 :
+     %19 = f * n
+     f = %19
+     %22 = 1
+     %23 = n - %22
+     n = %23
+     %12 = not end
+     %14 = 1
+     %15 = n <= %14
+     %15 = not %15
+     %16 = %12 and %15
+     ifFalse %16 goto endwhile1
+     goto loop25
   label endwhile1 :
-     %22 = 0
-     %23 = end == %22
-     ifFalse %23 goto endif2
+     %27 = 0
+     %28 = end == %27
+     ifFalse %28 goto endif2
      writei aux
-     %25 = '!'
-     writec %25
-     %25 = '='
-     writec %25
+     %30 = '!'
+     writec %30
+     %30 = '='
+     writec %30
      writei f
      writeln
   label endif2 :

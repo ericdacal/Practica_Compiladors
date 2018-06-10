@@ -17,42 +17,39 @@ function f
      %6 = 67
      %7 = a + %6
      z[%2] = %7
-     %9 = 9
-     %11 = 1
-     %10 = %11 * %9
-     %12 = %9[%10]
-     writei %12
-     writeln
-     %14 = 34
-     x = %14
-     %16 = 3
+     %9 = 34
+     x = %9
+     %11 = 3
+     %13 = 1
+     %12 = %13 * %11
+     %15 = 56
+     %16 = 9
      %18 = 1
      %17 = %18 * %16
-     %20 = 56
-     %21 = 9
-     %23 = 1
-     %22 = %23 * %21
-     %24 = %21[%22]
-     %25 = %20 + %24
-     z[%17] = %25
-     %27 = 3
-     %29 = 1
-     %28 = %29 * %27
-     %30 = %27[%28]
-     %32 = %30 <= x
-     %32 = not %32
-     ifFalse %32 goto endif1
-     %33 = 78
-     x = %33
+     %19 = z[%17]
+     %20 = %15 + %19
+     z[%12] = %20
+     %22 = 3
+     %24 = 1
+     %23 = %24 * %22
+     %25 = z[%23]
+     %27 = %25 <= x
+     %27 = not %27
+     ifFalse %27 goto endif1
+     %28 = 78
+     x = %28
      writef b
      writeln
   label endif1 :
-     %39 = 3
-     %41 = 1
-     %40 = %41 * %39
-     %42 = %39[%40]
-     writei %42
+     %34 = 3
+     %36 = 1
+     %35 = %36 * %34
+     %37 = z[%35]
+     writei %37
      writeln
+     %39 = 1
+     %40 = %39
+     _result = %40
      return
 endfunction
 
@@ -87,10 +84,11 @@ function main
      %1 = 3
      pushparam %1
      %2 = 2
+     %2 = float %2
      pushparam %2
      call f
-     popparam %1
-     popparam %2
+     popparam 
+     popparam 
      popparam %3
      ifFalse %3 goto endif1
      %5 = 3.7
