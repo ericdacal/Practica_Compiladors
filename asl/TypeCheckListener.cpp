@@ -521,7 +521,7 @@ void TypeCheckListener::exitAtom(AslParser::AtomContext *ctx) {
 
 
 
-// Getters for the necessary tree node atributes:
+// Getters for the necessary tree node atributes:t
 //   Scope, Type ans IsLValue
 SymTable::ScopeId TypeCheckListener::getScopeDecor(antlr4::ParserRuleContext *ctx) {
   return Decorations.getScope(ctx);

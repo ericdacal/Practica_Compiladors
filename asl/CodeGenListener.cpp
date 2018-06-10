@@ -158,7 +158,8 @@ void CodeGenListener::exitAssignStmt(AslParser::AssignStmtContext *ctx) {
   std::string     addr2 = getAddrDecor(ctx->expr());
   // std::string     offs2 = getOffsetDecor(ctx->expr());
   instructionList code2 = getCodeDecor(ctx->expr());
-  // TypesMgr::TypeId tid2 = getTypeDecor(ctx->expr());
+  TypesMgr::TypeId tid2 = getTypeDecor(ctx->expr());
+  //std::cout << Types.to_string(tid2) << std::endl;
   code = code1 || code2 || instruction::LOAD(addr1, addr2);
   putCodeDecor(ctx, code);
   DEBUG_EXIT();
@@ -194,9 +195,10 @@ void CodeGenListener::exitWhile(AslParser::WhileContext *ctx) {
   std::string labelRightCondition = "loop" + codeCounters.newTEMP();
   std::string labelEndWhile = "endwhile"+label;
   
+
   code = code1 || instruction::FJUMP(addr1, labelEndWhile) 
-         || instruction::LABEL(labelRightCondition) || code2
-         || instruction::FJUMP(addr1, labelEndWhile) || instruction::UJUMP(labelRightCondition) ||instruction::LABEL(labelEndWhile);
+  || instruction::LABEL(labelRightCondition) || code2
+  || code1 || instruction::FJUMP(addr1, labelEndWhile) || instruction::UJUMP(labelRightCondition) ||instruction::LABEL(labelEndWhile);
   putCodeDecor(ctx, code);
   DEBUG_EXIT();
 }
@@ -301,7 +303,7 @@ void CodeGenListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
   TypesMgr::TypeId t  = getTypeDecor(ctx);
 
-  std::cout << ctx->getText() << " " << Types.to_string(t) << ": " << ctx->expr(0)->getText() << " " << Types.to_string(t1) << " " << ctx->expr(1)->getText() << " " << Types.to_string(t2) << std::endl;
+  //std::cout << ctx->getText() << " " << Types.to_string(t) << ": " << ctx->expr(0)->getText() << " " << Types.to_string(t1) << " " << ctx->expr(1)->getText() << " " << Types.to_string(t2) << std::endl;
   
   std::string temp = "%"+codeCounters.newTEMP();
 
@@ -371,11 +373,10 @@ void CodeGenListener::exitRelational(AslParser::RelationalContext *ctx) {
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
   TypesMgr::TypeId t  = getTypeDecor(ctx);
   
-   //std::cout << "Relational " << Types.to_string(t1) << " " << Types.to_string(t2) << " " << Types.to_string(t) <<  std::endl;
-  
   std::string temp = "%"+codeCounters.newTEMP();
   
   if (!Types.isFloatTy(t1) and !Types.isFloatTy(t2) ){
+    //std::cout << "Relational " << Types.to_string(t1) << " " << Types.to_string(t2) << " " << Types.to_string(t) <<  std::endl;
     if (ctx->EQUAL()){
         code = code || instruction::EQ(temp, addr1, addr2);
     }
