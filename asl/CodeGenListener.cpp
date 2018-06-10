@@ -484,9 +484,15 @@ void CodeGenListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
     TypesMgr::TypeId tVector = Types.getArrayElemType(t);
     int size = Types.getSizeOfType(tVector);
   
-    code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr);
+    if (Symbols.isParameterClass(nameVector)) {
+      code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr) || instruction::LOAD(addr,nameVector);
+      putAddrDecor(ctx, addr);
+    }
+    else{
+      code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr);
+      putAddrDecor(ctx, nameVector);
+    }
     
-    putAddrDecor(ctx, nameVector);
     putCodeDecor(ctx, code);
     putOffsetDecor(ctx, offset);
   }
