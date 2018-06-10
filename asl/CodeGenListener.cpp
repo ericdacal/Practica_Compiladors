@@ -118,12 +118,12 @@ void CodeGenListener::enterCallfunctionStmt(AslParser::CallfunctionStmtContext *
 }
 
 void CodeGenListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *ctx) {
-instructionList code;
+  instructionList code;
   //std::string name = ctx->ident()->ID()->getSymbol()->getText();
-  std::string temp = "%"+codeCounters.newTEMP();
   std::string name = ctx->ID()->getText();
   TypesMgr::TypeId t = Symbols.getType(name);
   TypesMgr:: TypeId tRet = Types.getFuncReturnType(t);
+  std::string temp = "%" + codeCounters.newTEMP();
   
   if (!Types.isVoidTy(tRet)) {
     code = code || instruction::PUSH("");
@@ -132,28 +132,29 @@ instructionList code;
   for(uint i = 0; i < ctx->expr().size(); ++i){
       std::string param = getAddrDecor(ctx->expr(i));
       TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
-      std::string f_addr = "%" + codeCounters.newTEMP();
-      
-      if (Types.isArrayTy(texpr)) {
-            code = code || instruction::ALOAD(f_addr, param);
-            param = f_addr;
-      }
-      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
       TypesMgr::TypeId tparam = Types.getParameterType(t,i);
-      code = code || codeArimetic;
-      
+            
       if(Types.isFloatTy(tparam) and Types.isIntegerTy(texpr)) {
         code = code || instruction::FLOAT(param,param);
       }
-      code = code || instruction::PUSH(param);
+      
+      if (Types.isArrayTy(texpr)) {
+          std::string f_addr = "%" + codeCounters.newTEMP();
+          code = code || instruction::ALOAD(f_addr, param);
+          param = f_addr;
+      }
+      
+      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
+      code = code || codeArimetic || instruction::PUSH(param);
   }
   code = code || instruction::CALL(name);
   
   for(uint i = 0; i < ctx->expr().size(); ++i){
-      std::string param = getAddrDecor(ctx->expr(i));
       code = code || instruction::POP("");
   }
+  
   if (!Types.isVoidTy(tRet)) {
+    std::string temp = "%" + codeCounters.newTEMP();
     code = code || instruction::POP(temp);
   }
   putAddrDecor(ctx,temp);
@@ -166,12 +167,12 @@ void CodeGenListener::enterCallfunction(AslParser::CallfunctionContext *ctx) {
 }
 
 void CodeGenListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
+ //std::string name = ctx->ident()->ID()->getSymbol()->getText();
   instructionList code;
-  //std::string name = ctx->ident()->ID()->getSymbol()->getText();
-  std::string temp = "%"+codeCounters.newTEMP();
   std::string name = ctx->ID()->getText();
   TypesMgr::TypeId t = Symbols.getType(name);
   TypesMgr:: TypeId tRet = Types.getFuncReturnType(t);
+  std::string temp = "%" + codeCounters.newTEMP();
   
   if (!Types.isVoidTy(tRet)) {
     code = code || instruction::PUSH("");
@@ -180,28 +181,27 @@ void CodeGenListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
   for(uint i = 0; i < ctx->expr().size(); ++i){
       std::string param = getAddrDecor(ctx->expr(i));
       TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
-      std::string f_addr = "%" + codeCounters.newTEMP();
-      
-      if (Types.isArrayTy(texpr)) {
-            code = code || instruction::ALOAD(f_addr, param);
-            param = f_addr;
-      }
-      
-      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
       TypesMgr::TypeId tparam = Types.getParameterType(t,i);
-      code = code || codeArimetic;
-      
+            
       if(Types.isFloatTy(tparam) and Types.isIntegerTy(texpr)) {
         code = code || instruction::FLOAT(param,param);
       }
-      code = code || instruction::PUSH(param);
+      
+      if (Types.isArrayTy(texpr)) {
+          std::string f_addr = "%" + codeCounters.newTEMP();
+          code = code || instruction::ALOAD(f_addr, param);
+          param = f_addr;
+      }
+      
+      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
+      code = code || codeArimetic || instruction::PUSH(param);
   }
   code = code || instruction::CALL(name);
   
   for(uint i = 0; i < ctx->expr().size(); ++i){
-      std::string param = getAddrDecor(ctx->expr(i));
       code = code || instruction::POP("");
   }
+  
   if (!Types.isVoidTy(tRet)) {
     code = code || instruction::POP(temp);
   }
