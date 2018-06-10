@@ -328,7 +328,7 @@ void TypeCheckListener::enterValue(AslParser::ValueContext *ctx) {
   DEBUG_ENTER();
 }
 void TypeCheckListener::exitValue(AslParser::ValueContext *ctx) {
-  TypesMgr::TypeId t = Types.createIntegerTy();
+  TypesMgr::TypeId t = getTypeDecor(ctx->expr());
   putTypeDecor(ctx, t);
   putIsLValueDecor(ctx, false);
   DEBUG_EXIT();

@@ -301,9 +301,10 @@ void CodeGenListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
   TypesMgr::TypeId t2 = getTypeDecor(ctx->expr(1));
   TypesMgr::TypeId t  = getTypeDecor(ctx);
 
-  //std::cout << Types.to_string(t1) << " " << Types.to_string(t2) << " " << Types.to_string(t) <<  std::endl;
+  std::cout << ctx->getText() << " " << Types.to_string(t) << ": " << ctx->expr(0)->getText() << " " << Types.to_string(t1) << " " << ctx->expr(1)->getText() << " " << Types.to_string(t2) << std::endl;
   
   std::string temp = "%"+codeCounters.newTEMP();
+
   
   if (Types.isIntegerTy(t)){
     if (ctx->MUL())
