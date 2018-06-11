@@ -53,7 +53,7 @@ function main
   label endif1 :
      %12 = not end
      ifFalse %12 goto endwhile1
-  label loop29 :
+  label loop28 :
      writei i
      %14 = '!'
      writec %14
@@ -66,19 +66,19 @@ function main
      popparam %16
      writei %16
      writeln
-     %21 = i == max
-     ifFalse %21 goto else28
-     %22 = 1
-     end = %22
+     %20 = i == max
+     ifFalse %20 goto else27
+     %21 = 1
+     end = %21
      goto endif2
-  label else28 :
-     %25 = 1
-     %26 = i + %25
-     i = %26
+  label else27 :
+     %24 = 1
+     %25 = i + %24
+     i = %25
   label endif2 :
      %12 = not end
      ifFalse %12 goto endwhile1
-     goto loop29
+     goto loop28
   label endwhile1 :
      return
 endfunction

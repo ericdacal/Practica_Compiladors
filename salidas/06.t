@@ -76,22 +76,22 @@ function fz
      pushparam 
      %12 = 55555
      pushparam %12
+     %12 = float %15
      %13 = 1
      %14 = 4
      %15 = %13 / %14
-     %15 = float %15
-     pushparam %15
+     pushparam %12
      call f
      popparam 
      popparam 
-     popparam %16
+     popparam %18
   label endif1 :
-     %18 = 3
-     %19 = r + %18
-     %22 = float %19
-     %21 = %22 *. u
-     %23 = %21
-     _result = %23
+     %20 = 3
+     %21 = r + %20
+     %24 = float %21
+     %23 = %24 *. u
+     %25 = %23
+     _result = %25
      return
 endfunction
 

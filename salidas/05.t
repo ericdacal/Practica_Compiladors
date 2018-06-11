@@ -35,21 +35,25 @@ function f
      %25 = z[%23]
      %27 = %25 <= x
      %27 = not %27
-     ifFalse %27 goto endif1
+     ifFalse %27 goto else34
      %28 = 78
      x = %28
      writef b
      writeln
+     goto endif1
+  label else34 :
+     %32 = 99
+     x = %32
   label endif1 :
-     %34 = 3
-     %36 = 1
-     %35 = %36 * %34
-     %37 = z[%35]
-     writei %37
+     %35 = 3
+     %37 = 1
+     %36 = %37 * %35
+     %38 = z[%36]
+     writei %38
      writeln
-     %39 = 1
-     %40 = %39
-     _result = %40
+     %40 = 1
+     %41 = %40
+     _result = %41
      return
 endfunction
 
@@ -83,8 +87,8 @@ function main
      pushparam 
      %1 = 3
      pushparam %1
-     %2 = 2
      %2 = float %2
+     %2 = 2
      pushparam %2
      call f
      popparam 
