@@ -87,8 +87,8 @@ function main
      pushparam 
      %1 = 3
      pushparam %1
-     %2 = float %2
      %2 = 2
+     %2 = float %2
      pushparam %2
      call f
      popparam 

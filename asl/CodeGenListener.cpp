@@ -128,23 +128,26 @@ void CodeGenListener::exitCallfunctionStmt(AslParser::CallfunctionStmtContext *c
     code = code || instruction::PUSH("");
   }
   
+  
   for(uint i = 0; i < ctx->expr().size(); ++i){
       std::string param = getAddrDecor(ctx->expr(i));
       TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
       TypesMgr::TypeId tparam = Types.getParameterType(t,i);
-            
-      if(Types.isFloatTy(tparam) and Types.isIntegerTy(texpr)) {
-        code = code || instruction::FLOAT(param,param);
-      }
+      
+      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
+      code = code || codeArimetic;
       
       if (Types.isArrayTy(texpr)) {
           std::string f_addr = "%" + codeCounters.newTEMP();
           code = code || instruction::ALOAD(f_addr, param);
           param = f_addr;
       }
+            
+      if(Types.isFloatTy(tparam) and Types.isIntegerTy(texpr)) {
+        code = code || instruction::FLOAT(param,param);
+      }
       
-      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
-      code = code || codeArimetic || instruction::PUSH(param);
+      code = code || instruction::PUSH(param);
   }
   code = code || instruction::CALL(name);
   
@@ -181,6 +184,9 @@ void CodeGenListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
       std::string param = getAddrDecor(ctx->expr(i));
       TypesMgr::TypeId texpr = getTypeDecor(ctx->expr(i));
       TypesMgr::TypeId tparam = Types.getParameterType(t,i);
+      
+      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
+      code = code || codeArimetic;
             
       if(Types.isFloatTy(tparam) and Types.isIntegerTy(texpr)) {
         code = code || instruction::FLOAT(param,param);
@@ -191,9 +197,7 @@ void CodeGenListener::exitCallfunction(AslParser::CallfunctionContext *ctx) {
           code = code || instruction::ALOAD(f_addr, param);
           param = f_addr;
       }
-      
-      instructionList codeArimetic = getCodeDecor(ctx->expr(i));
-      code = code || codeArimetic || instruction::PUSH(param);
+      code = code || instruction::PUSH(param);
   }
   code = code || instruction::CALL(name);
   
@@ -534,6 +538,7 @@ void CodeGenListener::exitArithmetic(AslParser::ArithmeticContext *ctx) {
     if (Types.isIntegerTy(getTypeDecor(ctx->expr(0)))) {
         faddr1 = "%"+codeCounters.newTEMP();
         faddr2 = addr2;
+  
         code = code  || instruction::FLOAT(faddr1,addr1);
     }
     else if (Types.isIntegerTy(getTypeDecor(ctx->expr(1)))) {
