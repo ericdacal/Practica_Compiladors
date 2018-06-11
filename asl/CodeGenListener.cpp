@@ -485,8 +485,8 @@ void CodeGenListener::exitLeft_expr(AslParser::Left_exprContext *ctx) {
     int size = Types.getSizeOfType(tVector);
   
     if (Symbols.isParameterClass(nameVector)) {
-      code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr) || instruction::LOAD(addr,nameVector);
-      putAddrDecor(ctx, addr);
+      code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr) || instruction::LOAD(temp,nameVector);
+      putAddrDecor(ctx, temp);
     }
     else{
       code = code || instruction::ILOAD(i,std::to_string(size)) || instruction::MUL(offset,i,addr);
